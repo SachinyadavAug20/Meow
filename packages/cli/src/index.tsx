@@ -17,7 +17,7 @@ function App() {
       gap={2}
     >
       <Header />
-      <box width="100%" maxWidth={78} paddingX={2}>
+      <box width="100%" maxWidth={78} maxHeight={8} paddingX={2}>
         <InputBar onSubmit={onSubmit} disabled={disabled} />
       </box>
     </box>

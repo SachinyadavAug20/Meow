@@ -7,14 +7,16 @@ interface Prop {
   disabled: boolean;
 }
 
-
+export const TEXTAREA_KEY_BINDINGS: KeyBinding[] = [
+  { name: "return", action: "submit" },
+  { name: "enter", action: "submit" },
+  { name: "return", shift: true, action: "newline" },
+  { name: "enter", shift: true, action: "newline" },
+];
 export function InputBar({ onSubmit, disabled }: Prop) {
   return (
     <box width="100%" alignItems="center">
-      <box
-      border={["left"]}
-      borderColor="cyan"
-      >
+      <box border={["left"]} borderColor="cyan" width="100%">
         <box
           position="relative"
           justifyContent="center"
@@ -24,8 +26,13 @@ export function InputBar({ onSubmit, disabled }: Prop) {
           width="100%"
           gap={1}
         >
-          <textarea flexGrow={1}  focused={!disabled} placeholder={`Ask anything... ${getRandomQuestion()}`} />
-          <StatusBar/>
+          <textarea
+            flexGrow={1}
+            keyBindings={TEXTAREA_KEY_BINDINGS}
+            focused={!disabled}
+            placeholder={`Ask anything... ${getRandomQuestion()}`}
+          />
+          <StatusBar />
         </box>
       </box>
     </box>

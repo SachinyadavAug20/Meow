@@ -1,5 +1,12 @@
 # Meow
 
+timeline:
+
+as of 28-5-2026 : Basic setup and UI
+
+![screenshot](Documentation/screenshots/1.png)
+
+
 --- 
 Using bun for workspace
 bun: [bun workspaces](https://bun.com/docs/pm/workspaces)
@@ -8,9 +15,10 @@ OpenTUI: [openTUI](https://opentui.com/docs/bindings/react/)
 
 Run as -> go to packages/cli and run `bun run dev`
 make it a script at root to do same
-```
+```json
   "scripts": {
-    "dev":"bun run --watch packages/cli/src/index.tsx"
+    "dev:cli":"bun run --watch packages/cli/src/index.tsx"
   }
 
 ```
+
