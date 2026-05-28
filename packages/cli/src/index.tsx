@@ -2,9 +2,11 @@ import { createCliRenderer } from "@opentui/core";
 import { createRoot } from "@opentui/react";
 import Header from "./components/header";
 import { colors } from "../theme";
-import StatusBar from "./components/StatusBar";
+import { InputBar } from "./components/InputBar";
 
 function App() {
+  const onSubmit = (text: string) => {};
+  let disabled = false;
   return (
     <box
       alignItems="center"
@@ -15,7 +17,9 @@ function App() {
       gap={2}
     >
       <Header />
-      <StatusBar/>
+      <box width="100%" maxWidth={78} paddingX={2}>
+        <InputBar onSubmit={onSubmit} disabled={disabled} />
+      </box>
     </box>
   );
 }
