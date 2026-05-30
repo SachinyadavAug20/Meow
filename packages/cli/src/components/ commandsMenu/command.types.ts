@@ -8,3 +8,4 @@ export interface Command{
   value:string;
   action?:(ctx:commandContext)=>void|Promise<void>;
 }
+
