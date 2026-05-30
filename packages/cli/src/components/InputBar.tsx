@@ -29,7 +29,12 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     handleContentChange,
     resolveCommand,
     setSelectedIndex,
+    scrollRef
   } = useCommandMenu();
+  const handleCommandExcute=useCallback((index:number)=>{
+    const command=resolveCommand(index)
+    handleCommand(command)
+  },[])
   const handleTextareaContentChange = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -89,7 +94,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
           width="100%"
           gap={1}
         >
-          {true && (
+          {showCommandMenu && (
             <box
               position="absolute"
               bottom="100%"
@@ -98,10 +103,18 @@ export function InputBar({ onSubmit, disabled }: Prop) {
               backgroundColor="#1a1a24"
               zIndex={10}
             >
-              <CommandsMenu query="" />
+              <CommandsMenu
+                query={commandQuery}
+                selectedIndex={selectedIndex}
+                scrollRef={scrollRef}
+                onSelect={setSelectedIndex}
+                onExecute={handleCommandExcute}
+              />
             </box>
           )}
           <textarea
+            onContentChange={handleTextareaContentChange}
+            ref={textareaRef}
             flexGrow={1}
             keyBindings={TEXTAREA_KEY_BINDINGS}
             focused={!disabled}

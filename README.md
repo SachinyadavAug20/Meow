@@ -2,6 +2,10 @@
 
 timeline:
 
+as of 30-5-2026 : "/" menu for chat UI
+
+![screenshot](Documentation/screenshots/2.png)
+
 as of 28-5-2026 : Basic setup and UI
 
 ![screenshot](Documentation/screenshots/1.png)
