@@ -5,58 +5,91 @@ export const COMMANDS: Command[] = [
     name: "new",
     description: "Start a new conversation",
     value: "/new",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Starting a new conversation...",variant:"success",duration:3000})
+    }
   },
   {
     name: "agents",
     description: "Switch agent",
     value: "/agents",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Switching agent...",variant:"success",duration:3000})
+    }
   },
   {
     name: "model",
     description: "Select a model",
     value: "/model",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Selecting model...",variant:"success",duration:3000})
+    }
   },
   {
     name: "session",
     description: "Show your conversation history",
     value: "/session",
+    action:(ctx)=>{
+      ctx.toast.show({message:"loading session...",variant:"success",duration:3000})
+    }
   },
   {
     name: "theme",
     description: "Change the color theme",
     value: "/theme",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Opening theme selector...",variant:"success",duration:3000})
+    }
   },
   {
     name: "login",
     description: "Sign in to your account",
     value: "/login",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
+    }
   },
   {
     name: "logout",
     description: "Sign out of your account",
     value: "/logout",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
+    }
   },
   {
     name: "upgrade",
     description: "Buy more credits",
     value: "/upgrade",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
+    }
   },
   {
     name: "usage",
     description: "Open billing portal in your browser",
     value: "/usage",
+    action:(ctx)=>{
+      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
+    }
   },
   {
     name: "help",
     description: "Show help",
     value: "/help",
+    action:(ctx)=>{
+      ctx.toast.show({message:"help menu...",variant:"success",duration:3000})
+    }
   },
   {
     name: "exit",
     description: "Exit the application",
     value: "/exit",
     action: (ctx) => {
-      ctx.exit();
+      ctx.toast.show({message:"Thanks for using meow",variant:"success",duration:3000})
+      setTimeout(()=>{
+        ctx.exit();
+      },1000)
     },
   },
 ];
