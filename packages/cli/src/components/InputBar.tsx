@@ -31,10 +31,6 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     setSelectedIndex,
     scrollRef
   } = useCommandMenu();
-  const handleCommandExcute=useCallback((index:number)=>{
-    const command=resolveCommand(index)
-    handleCommand(command)
-  },[])
   const handleTextareaContentChange = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
@@ -72,6 +68,12 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     },
     [renderer],
   );
+
+  const handleCommandExcute=useCallback((index:number)=>{
+    const command=resolveCommand(index)
+    handleCommand(command)
+  },[resolveCommand,handleCommand])
+
   onSubmitRef.current = () => {
     if (disabled) return;
     if (showCommandMenu) {
