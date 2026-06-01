@@ -3,10 +3,11 @@ import { getRandomQuestion } from "../../utlis/constant";
 import StatusBar from "./StatusBar";
 import { CommandsMenu } from "./ commandsMenu";
 import { useCallback, useEffect, useRef } from "react";
-import { useRenderer } from "@opentui/react";
+import { useKeyboard, useRenderer } from "@opentui/react";
 import { useCommandMenu } from "./ commandsMenu/use-command-menu";
 import type { Command } from "./ commandsMenu/command.types";
 import { useToast } from "../providers/toast";
+import { useKeyboardLayer } from "../providers/keyboard-layer";
 
 interface Prop {
   onSubmit: (text: string) => void;
@@ -23,7 +24,9 @@ export function InputBar({ onSubmit, disabled }: Prop) {
   const textareaRef = useRef<TextareaRenderable>(null);
   const onSubmitRef = useRef<() => void>(() => {});
   const renderer = useRenderer();
-  const toast=useToast();
+  const toast = useToast();
+  const { isTopLayer, setResponder } = useKeyboardLayer();
+
   const {
     showCommandMenu,
     commandQuery,
@@ -31,7 +34,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     handleContentChange,
     resolveCommand,
     setSelectedIndex,
-    scrollRef
+    scrollRef,
   } = useCommandMenu();
   const handleTextareaContentChange = useCallback(() => {
     const textarea = textareaRef.current;
@@ -63,19 +66,22 @@ export function InputBar({ onSubmit, disabled }: Prop) {
       if (command.action) {
         command.action({
           exit: () => renderer.destroy(),
-            toast,
+          toast,
         });
       } else {
         textarea.insertText(command.value + " ");
       }
     },
-    [renderer,toast],
+    [renderer, toast],
   );
 
-  const handleCommandExcute=useCallback((index:number)=>{
-    const command=resolveCommand(index)
-    handleCommand(command)
-  },[resolveCommand,handleCommand])
+  const handleCommandExcute = useCallback(
+    (index: number) => {
+      const command = resolveCommand(index);
+      handleCommand(command);
+    },
+    [resolveCommand, handleCommand],
+  );
 
   onSubmitRef.current = () => {
     if (disabled) return;
@@ -86,6 +92,19 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     }
     handleSubmit();
   };
+
+  useEffect(() => {
+    setResponder("base",()=>{
+      if(disabled) return false;
+      const textarea = textareaRef.current;
+      if(textarea && textarea.plainText.length>0){
+        textarea.setText("");
+        return true
+      }
+      return false
+    });
+    return ()=> setResponder("base",null);
+  }, [disabled,setResponder]);
 
   return (
     <box width="100%" alignItems="center">
@@ -122,7 +141,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
             ref={textareaRef}
             flexGrow={1}
             keyBindings={TEXTAREA_KEY_BINDINGS}
-            focused={!disabled}
+            focused={!disabled && (isTopLayer("base") || isTopLayer("command"))}
             placeholder={`Ask anything... ${getRandomQuestion()}`}
           />
           <StatusBar />

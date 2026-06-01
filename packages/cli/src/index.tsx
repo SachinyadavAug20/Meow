@@ -4,11 +4,13 @@ import Header from "./components/header";
 import { colors } from "../theme";
 import { InputBar } from "./components/InputBar";
 import { ToastProvider } from "./providers/toast";
+import { KeyboardLayerProvider} from "./providers/keyboard-layer"
 
 function App() {
   const onSubmit = (text: string) => {};
   let disabled = false;
   return (
+    <KeyboardLayerProvider>
     <ToastProvider>
       <box
         alignItems="center"
@@ -24,6 +26,7 @@ function App() {
         </box>
       </box>
     </ToastProvider>
+    </KeyboardLayerProvider>
   );
 }
 

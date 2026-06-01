@@ -18,7 +18,7 @@ const keyboardLayerContext = createContext<KeyboardLayerContextValue | null>(
   null,
 );
 
-export function keyboardLayerProvider({
+export function KeyboardLayerProvider({
   children,
 }: {
   children: React.ReactNode;
