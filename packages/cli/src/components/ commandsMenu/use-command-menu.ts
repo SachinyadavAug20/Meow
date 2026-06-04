@@ -20,7 +20,7 @@ export function useCommandMenu(): UseCommandMenuReturn {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showCommandMenu, setShowCommandMenu] = useState(false);
   const scrollRef = useRef<ScrollBoxRenderable | null>(null);
-  const {push,pop,isTopLayer} = useKeyboardLayer();
+  const { push, pop, isTopLayer } = useKeyboardLayer();
 
   const commandQuery =
     showCommandMenu && textValue.startsWith("/") ? textValue.slice(1) : "";
@@ -28,6 +28,10 @@ export function useCommandMenu(): UseCommandMenuReturn {
     () => getFilteredCommands(commandQuery),
     [commandQuery],
   );
+  const close = () => {
+    setShowCommandMenu(false);
+    pop("command");
+  };
   const handleContentChange = (text: string) => {
     setTextValue(text);
     setSelectedIndex(0);
@@ -37,31 +41,29 @@ export function useCommandMenu(): UseCommandMenuReturn {
       scrollbox.scrollTo(0);
     }
     const prefix = text.startsWith("/") ? text.slice(1) : null;
+
     if (prefix !== null && !prefix.includes(" ")) {
       setShowCommandMenu(true);
-      push("command",()=>{
-        setShowCommandMenu(false);
-        pop("command")
+      push("command", () => {
+        close();
         return true;
-      })
+      });
     } else {
-      setShowCommandMenu(false);
-      pop("command")
+      close();
     }
   };
   // resolve the command
   const resolveCommand = (index: number) => {
     const command = filteredCommands[index];
-    if (command) setShowCommandMenu(false);
+    if (command) close();
     return command;
   }; // return command to do action
 
   useKeyboard((key) => {
     if (!showCommandMenu || !isTopLayer("command")) return;
-    if (key.name === "escape"){
+    if (key.name === "escape") {
       key.preventDefault();
-      setShowCommandMenu(false);
-      pop("command")
+      close();
     } else if (key.name === "up") {
       key.preventDefault();
       setSelectedIndex((i: number) => {

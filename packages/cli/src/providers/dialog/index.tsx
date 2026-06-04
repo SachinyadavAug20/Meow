@@ -79,10 +79,26 @@ function Dialog({ currentDialog, close }: DialogProps) {
       justifyContent="center"
       alignItems="center"
     >
-      <box width={Math.min(60,dimesion.width-4)} height="auto" backgroundColor="#1a1a24" paddingX={4} paddingY={1} flexDirection="column" gap={1} onMouseDown={(e)=>e.stopPropagation()}>
-        <box paddingBottom={1} flexDirection="row" alignItems="center" justifyContent="center">
+      <box
+        width={Math.min(60, dimesion.width - 4)}
+        height="auto"
+        backgroundColor="#1a1a24"
+        paddingX={4}
+        paddingY={1}
+        flexDirection="column"
+        gap={1}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <box
+          paddingBottom={1}
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <text attributes={TextAttributes.BOLD}>{title}</text>
-          <text attributes={TextAttributes.DIM} onMouseDown={()=>close()}>esc</text>
+          <text attributes={TextAttributes.DIM} onMouseDown={() => close()}>
+            esc
+          </text>
         </box>
         <box flexGrow={1}>{children}</box>
       </box>

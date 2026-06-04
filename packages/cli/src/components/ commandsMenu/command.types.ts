@@ -1,8 +1,10 @@
+import type { DialogContextValue } from "../../providers/dialog";
 import type { ToastContextValue } from "../../providers/toast";
 
 export interface commandContext{
   exit:()=>void;
-  toast:ToastContextValue
+  toast:ToastContextValue;
+  dialog:DialogContextValue;
 }
 
 export interface Command{

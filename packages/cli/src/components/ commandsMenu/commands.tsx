@@ -14,7 +14,10 @@ export const COMMANDS: Command[] = [
     description: "Switch agent",
     value: "/agents",
     action:(ctx)=>{
-      ctx.toast.show({message:"Switching agent...",variant:"success",duration:3000})
+      ctx.dialog.open({
+        title:"Select Agent",
+        children:<text>Agent selection ...</text>
+      })
     }
   },
   {
@@ -22,7 +25,10 @@ export const COMMANDS: Command[] = [
     description: "Select a model",
     value: "/model",
     action:(ctx)=>{
-      ctx.toast.show({message:"Selecting model...",variant:"success",duration:3000})
+      ctx.dialog.open({
+        title:"Select Model",
+        children:<text>Model selection ...</text>
+      })
     }
   },
   {
