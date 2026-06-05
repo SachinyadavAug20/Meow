@@ -56,4 +56,4 @@ export const THEMES:Theme[]=[
   
 ]
 
-export const DEFAULT_THEME=THEMES.find((t)=>t.name==="NightFox")
+export const DEFAULT_THEME:Theme=THEMES[0]!
