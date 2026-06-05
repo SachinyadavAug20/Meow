@@ -6,6 +6,7 @@ import {
 import { useKeyboard } from "@opentui/react";
 import { useCallback, useRef, useState, type ReactNode } from "react";
 import { useKeyboardLayer } from "../providers/keyboard-layer";
+import { useTheme } from "../providers/theme";
 
 const MAX_VISIBLE_ITEM = 6;
 type DialogSearchListProps<T> = {
@@ -77,6 +78,7 @@ export function DialogSearchList<T>({
       });
     }
   });
+  const {colors}=useTheme();
   return (
     <box flexDirection="column" gap={1}>
       <input
@@ -97,7 +99,7 @@ export function DialogSearchList<T>({
                 flexDirection="row"
                 height={1}
                 overflow="hidden"
-                backgroundColor={isSelected ? "#89b4fa" : undefined}
+                backgroundColor={isSelected ? colors.selection : undefined}
                 onMouseMove={() => {
                   setSelectedIndex(i);
                   if (onHighlight) onHighlight(item);

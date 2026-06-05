@@ -6,30 +6,40 @@ import { InputBar } from "./components/InputBar";
 import { ToastProvider } from "./providers/toast";
 import { KeyboardLayerProvider } from "./providers/keyboard-layer";
 import { DialogProvider } from "./providers/dialog";
+import { ThemeProvider, useTheme } from "./providers/theme";
 
-function App() {
+function ThemeRoot() {
+  const { colors } = useTheme();
   const onSubmit = (text: string) => {};
   let disabled = false;
   return (
-    <KeyboardLayerProvider>
-      <DialogProvider>
-        <ToastProvider>
-          <box
-            alignItems="center"
-            justifyContent="center"
-            backgroundColor={colors.bg}
-            width="100%"
-            height="100%"
-            gap={2}
-          >
-            <Header />
-            <box width="100%" maxWidth={78} maxHeight={8} paddingX={2}>
-              <InputBar onSubmit={onSubmit} disabled={disabled} />
-            </box>
-          </box>
-        </ToastProvider>
-      </DialogProvider>
-    </KeyboardLayerProvider>
+    <box
+      alignItems="center"
+      justifyContent="center"
+      backgroundColor={colors.background}
+      width="100%"
+      height="100%"
+      gap={2}
+    >
+      <Header />
+      <box width="100%" maxWidth={78} maxHeight={8} paddingX={2}>
+        <InputBar onSubmit={onSubmit} disabled={disabled} />
+      </box>
+    </box>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <KeyboardLayerProvider>
+        <DialogProvider>
+          <ToastProvider>
+            <ThemeRoot />
+          </ToastProvider>
+        </DialogProvider>
+      </KeyboardLayerProvider>
+    </ThemeProvider>
   );
 }
 

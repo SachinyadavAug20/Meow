@@ -9,6 +9,7 @@ import type { Command } from "./ commandsMenu/command.types";
 import { useToast } from "../providers/toast";
 import { useKeyboardLayer } from "../providers/keyboard-layer";
 import { useDialog } from "../providers/dialog";
+import { useTheme } from "../providers/theme";
 
 interface Prop {
   onSubmit: (text: string) => void;
@@ -108,16 +109,17 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     });
     return ()=> setResponder("base",null);
   }, [disabled,setResponder]);
+  const {colors}=useTheme();
 
   return (
     <box width="100%" alignItems="center">
-      <box border={["left"]} borderColor="cyan" width="100%">
+      <box border={["left"]} borderColor={colors.primary} width="100%">
         <box
           position="relative"
           justifyContent="center"
           paddingX={2}
           paddingY={1}
-          backgroundColor="#1a1a24"
+          backgroundColor={colors.surface}
           width="100%"
           gap={1}
         >
@@ -127,7 +129,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
               bottom="100%"
               left={0}
               width="100%"
-              backgroundColor="#1a1a24"
+              backgroundColor={colors.surface}
               zIndex={10}
             >
               <CommandsMenu
