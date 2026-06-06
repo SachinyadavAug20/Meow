@@ -2,6 +2,14 @@
 
 timeline:
 
+as of 6-6-2026 : UI for new chat session
+
+![screenshot](Documentation/screenshots/4.png)
+
+as of 4-6-2026 : themes
+
+![screenshot](Documentation/screenshots/3.png)
+
 as of 30-5-2026 : "/" menu for chat UI
 
 ![screenshot](Documentation/screenshots/2.png)
