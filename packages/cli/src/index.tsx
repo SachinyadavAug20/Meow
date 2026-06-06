@@ -3,22 +3,22 @@ import { createRoot } from "@opentui/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { RootLayout } from "../layouts/root-layout";
 import { Home } from "./screens/home";
+import { NewSession } from "./screens/new-session";
+import { Session } from "./screens/session";
 
-const router=createMemoryRouter([
+const router = createMemoryRouter([
   {
-    path:'/',
-    element:<RootLayout/>,
-    children:[
-      {index:true,element:<Home/>},
-      {path:'session/new',element:<box><text>session/new</text></box>},
-      {path:'session/:id',element:<box><text>session/:id</text></box>},
-    ]
-  }
-])
+    path: "/",
+    element: <RootLayout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "session/new", element: <NewSession /> },
+      { path: "session/:id", element: <Session /> },
+    ],
+  },
+]);
 function App() {
-  return (
-    <RouterProvider router={router}/>
-  );
+  return <RouterProvider router={router} />;
 }
 
 const renderer = await createCliRenderer({
