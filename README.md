@@ -31,6 +31,6 @@ make it a script at root to do same
   "scripts": {
     "dev:cli":"bun run --watch packages/cli/src/index.tsx"
   }
-
 ```
+Hono is a express alternative
 

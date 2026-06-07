@@ -7,6 +7,14 @@
     "module": "Preserve",
     "moduleDetection": "force",
     "allowJs": true,
+    "compilerOptions": {
+      "target": "ESNext",
+      "lib": ["ESNext", "DOM"], // <--- Add "DOM" here
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "strict": true,
+      // ... rest of your config
+    },
 
     // Bundler mode
     "moduleResolution": "bundler",
