@@ -11,14 +11,19 @@
     "packages/cli": {
       "name": "@meow/cli",
       "dependencies": {
+        "@nightcode/shared": "workspace:*",
         "@opentui/core": "^0.2.15",
         "@opentui/react": "^0.2.15",
+        "hono": "^4.12.23",
         "opentui-spinner": "^0.0.6",
         "react": "^19.2.4",
         "react-router": "^7.14.0",
+        "zod": "^4.4.3",
       },
       "devDependencies": {
+        "@nightcode/server": "workspace:*",
         "@types/bun": "latest",
+        "@types/react": "^19.2.14",
       },
       "peerDependencies": {
         "typescript": "^5",
