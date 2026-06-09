@@ -34,7 +34,7 @@ const createSessionSchema = z.object({
   initialMessage: z.object({
     role: z.string(),
     content: z.string(),
-    mode: z.string,
+    mode: z.string(),
     model: z
       .string()
       .refine((id) => !!findSupportedChatModel(id), {

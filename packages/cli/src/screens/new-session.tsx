@@ -1,8 +1,8 @@
-import { Navigate, replace, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useEffect, useMemo, useRef } from "react";
 import { z } from "zod";
 import { DEFAULT_CHAT_MODEL_ID } from "@nightcode/shared";
-import { BotMessage, ErrorMessage, UserMessage } from "../components/message";
+import {  UserMessage } from "../components/message";
 import { SessionShell } from "../components/session-shell";
 import { useToast } from "src/providers/toast";
 import { apiClient } from "lib/api-client";
@@ -58,7 +58,6 @@ export function NewSession() {
         });
       } catch (error) {
         if(ignore) return;
-
         toast.show({
           variant:"error",
           message: error instanceof Error ? error.message : "Failed to create session",
@@ -67,15 +66,14 @@ export function NewSession() {
       }
     };
     createSession();
-  }, []);
+    return ()=>{
+      ignore=true;
+    }
+  }, [state,navigation,toast]);
+  if(!state) return null;
   return (
     <SessionShell onSubmit={() => {}} inputDisabled loading>
       <UserMessage message={state.message} />
-      <BotMessage
-        content="Hello, I am Meow, your personal AI chatbot. What can I do for you today?"
-        model="Meow"
-      />
-      <ErrorMessage message="I'm sorry, I didn't understand that. Could you please rephrase?" />
     </SessionShell>
   );
 }
