@@ -12,7 +12,7 @@ type SessionData=InferResponseType<(typeof apiClient.sessions)[":id"]["$get"],20
 const sessionLocationSchema=z.object({
   session:z.custom<SessionData>((val)=>val!=null && typeof val==="object" && "id" in val),
 })
-function ChatMessage({msg}:{msg:SessionData["messages"][number]}){ // which message to display user,bot or error message
+function ChatMessage({msg}:{msg:SessionData["message"][number]}){ // which message to display user,bot or error message
   if(msg.role==="USER"){
     return <UserMessage message={msg.content}/>
   }
@@ -69,7 +69,7 @@ export function Session() {
   }
   return (
     <SessionShell onSubmit={() => {}} >
-    {session.messages.map((msg)=>(
+    {session.message.map((msg)=>(
       <ChatMessage key={msg.id} msg={msg}/>
     ))}
     </SessionShell>

@@ -1,12 +1,18 @@
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 import session from "./routes/session"
+import { db } from "@meow/database";
 
 const app = new Hono();
 app.get("/", (c) => c.text("hello world"));
 
+setInterval(() => {
+  db.$queryRaw`SELECT 1`.catch(() => {});
+}, 120_000);
+
 // standarize error
 app.onError((e, c) => {
+  console.error("Unhandled error:", e instanceof Error ? e.message : e);
   if (e instanceof HTTPException) {
     return c.json(
       {
@@ -15,7 +21,6 @@ app.onError((e, c) => {
       e.status,
     );
   }
-  // console.error("Unhandled error", e);
   return c.json({ error: "Internal server error" }, 500);
 });
 const routes=app.route("/sessions",session);

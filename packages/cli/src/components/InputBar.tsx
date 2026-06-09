@@ -147,7 +147,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
             flexGrow={1}
             keyBindings={TEXTAREA_KEY_BINDINGS}
             focused={!disabled && (isTopLayer("base") || isTopLayer("command"))}
-            placeholder={`Ask anything... ${getRandomQuestion()}`}
+            placeholder={getRandomQuestion()}
           />
           <StatusBar />
         </box>
