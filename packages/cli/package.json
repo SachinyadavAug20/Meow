@@ -9,13 +9,13 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19.2.14",
-    "@nightcode/server": "workspace:*"
+    "@meow/server": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "@nightcode/shared": "workspace:*",
+    "@meow/shared": "workspace:*",
     "@opentui/core": "^0.2.15",
     "@opentui/react": "^0.2.15",
     "hono": "^4.12.23",

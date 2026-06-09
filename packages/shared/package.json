@@ -1,5 +1,5 @@
 {
-  "name": "@nightcode/shared",
+  "name": "@meow/shared",
   "type": "module",
   "private": true,
   "exports": {

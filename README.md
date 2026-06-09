@@ -34,3 +34,6 @@ make it a script at root to do same
 ```
 Hono is a express alternative
 
+[used prisma for db](https://www.prisma.io/docs/prisma-orm/quickstart/prisma-postgres)
+
+

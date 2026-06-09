@@ -61,14 +61,14 @@ export function Session() {
     }
     fetchSession();
     return ()=>{
-      ignore:true
+      ignore=true
     }
   },[id,prefetched,toast,navigate])
   if(!session){
-    return <SessionShell onSubmit={()=>{}}inputDisabled><text>No session</text></SessionShell>
+    return <SessionShell onSubmit={()=>{}}inputDisabled loading><text>No session</text></SessionShell>
   }
   return (
-    <SessionShell onSubmit={() => {}} inputDisabled >
+    <SessionShell onSubmit={() => {}} >
     {session.messages.map((msg)=>(
       <ChatMessage key={msg.id} msg={msg}/>
     ))}
