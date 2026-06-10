@@ -7,7 +7,7 @@ import {
   MESSAGE_MATCHER_IS_ALREADY_BUILT,
   type ParamIndexMap,
 } from "hono/router";
-import { streamSSE } from "hono/streaming";
+import { stream, streamSSE } from "hono/streaming";
 import { streamText as aiStreamText } from "ai";
 import type { ChatStreamEvent } from "@meow/shared";
 import { defaultPlugin } from "hono/ssg";
@@ -118,53 +118,107 @@ async function streamAIResponse(
     await stream.writeSSE({ event: "error", data: JSON.stringify(errorEvent) });
   }
 }
-const app = new Hono().post("/:sessionId", submitValidator, async (c) => {
-  const sessionId = c.req.param("sessionId");
-  const session = await db.session.findUnique({
-    where: { id: sessionId },
-    include: { message: { orderBy: { createdAt: "asc" } } },
-  });
-  if (!session) {
-    return c.json({ error: "Session not found" }, 404);
-  }
-  const data = c.req.valid("json");
-  await db.message.create({
-    data: {
-      sessionId,
-      role: "USER",
-      status: MessageStatus.COMPLETE,
-      model: data.model,
-      content: data.content,
-      mode: data.mode,
-    },
-  });
-  const history = buildConversationHistory([
-    ...session.message, //TODO: only last 10
-    {
-      role: "USER" as const,
-      content: data.content,
-      status: MessageStatus.COMPLETE,
-    },
-  ]);
-  const abortController = new AbortController();
-  return streamSSE(c, async (stream) => {
-    stream.onAbort(() => {
-      abortController.abort();
+
+const app = new Hono()
+  .post("/:sessionId/resume", async (c) => {
+    const sessionId = c.req.param("sessionId");
+    const session = await db.session.findUnique({
+      where: { id: sessionId },
+      include: { message: { orderBy: { createdAt: "asc" } } },
     });
-    await streamAIResponse(stream, {
-      sessionId,
-      model: data.model,
-      message: data.content,
-      history,
-      mode: data.mode,
-      abortController,
-    });
-    async (err:Error,stream:any)=>{
-      const message=err instanceof Error?err.message:String(err);
-      const errorEvent:ChatStreamEvent={type:"error",message}
-      await stream.writeSSE({event:"error",data:JSON.stringify(errorEvent)})
+    if (!session) {
+      return c.json({ error: "Session not found" }, 404);
     }
+    const lastMessage = session.message[session.message.length - 1];
+    if (!lastMessage || lastMessage.role !== "USER") {
+      return c.json(
+        { error: "Session has no pending user message to resume" },
+        409,
+      );
+    }
+    if (!isSupportedChatModel(lastMessage.model)) {
+      return c.json(
+        { error: `Session uses unsupported model ${lastMessage.model}` },
+        409,
+      );
+    }
+    const history = buildConversationHistory(session.message);
+    const abortController = new AbortController();
+    return streamSSE(
+      c,
+      async (stream) => {
+        stream.onAbort(() => {
+          abortController.abort();
+        });
+        await streamAIResponse(stream, {
+          sessionId,
+          model: lastMessage.model,
+          history,
+          mode: lastMessage.mode,
+          abortController,
+          message: lastMessage.content,
+        });
+      },
+      async (err, stream) => {
+        const message = err instanceof Error ? err.message : String(err);
+        const errorEvent: ChatStreamEvent = { type: "error", message };
+        await stream.writeSSE({
+          event: "error",
+          data: JSON.stringify(errorEvent),
+        });
+      },
+    );
+  })
+  .post("/:sessionId", submitValidator, async (c) => {
+    const sessionId = c.req.param("sessionId");
+    const session = await db.session.findUnique({
+      where: { id: sessionId },
+      include: { message: { orderBy: { createdAt: "asc" } } },
+    });
+    if (!session) {
+      return c.json({ error: "Session not found" }, 404);
+    }
+    const data = c.req.valid("json");
+    await db.message.create({
+      data: {
+        sessionId,
+        role: "USER",
+        status: MessageStatus.COMPLETE,
+        model: data.model,
+        content: data.content,
+        mode: data.mode,
+      },
+    });
+    const history = buildConversationHistory([
+      ...session.message, //TODO: only last 10
+      {
+        role: "USER" as const,
+        content: data.content,
+        status: MessageStatus.COMPLETE,
+      },
+    ]);
+    const abortController = new AbortController();
+    return streamSSE(c, async (stream) => {
+      stream.onAbort(() => {
+        abortController.abort();
+      });
+      await streamAIResponse(stream, {
+        sessionId,
+        model: data.model,
+        message: data.content,
+        history,
+        mode: data.mode,
+        abortController,
+      });
+      async (err: Error, stream: any) => {
+        const message = err instanceof Error ? err.message : String(err);
+        const errorEvent: ChatStreamEvent = { type: "error", message };
+        await stream.writeSSE({
+          event: "error",
+          data: JSON.stringify(errorEvent),
+        });
+      };
+    });
   });
-});
 
 export default app;
