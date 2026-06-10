@@ -36,4 +36,7 @@ Hono is a express alternative
 
 [used prisma for db](https://www.prisma.io/docs/prisma-orm/quickstart/prisma-postgres)
 
+Vercel AI SDK
+it is  a open source SDK for Vercel for provider => need stremaing => [stremaning](https://ai-sdk.dev/docs/foundations/streaming)
+combine with hono streaming [hono streaming](https://hono.dev/docs/helpers/streaming)
 

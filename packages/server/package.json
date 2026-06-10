@@ -9,9 +9,13 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.82",
+    "@ai-sdk/google": "^3.0.80",
+    "@ai-sdk/openai": "^3.0.69",
     "@hono/zod-validator": "^0.8.0",
     "@meow/database": "workspace:*",
     "@meow/shared": "workspace:*",
+    "ai": "^6.0.199",
     "dotenv": "^17.4.2",
     "hono": "^4.12.23",
     "zod": "^4.4.3"

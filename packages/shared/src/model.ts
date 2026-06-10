@@ -6,7 +6,7 @@ export type ModelPricing = {
 };
 
 // Fixed the typo from "antropic" to "anthropic"
-export type SupportedProvider = "anthropic" | "openai" | "mistral" | "google";
+export type SupportedProvider = "anthropic" | "openai" | "google";
 
 type SupportedChatModelDefinition = {
   id: string;
@@ -129,31 +129,6 @@ export const SUPPORTED_CHAT_MODELS: SupportedChatModelDefinition[] = [
       outputUsdPerMillionToken: 12.0
     }
   },
-
-  {
-    id: "ministral-3b",
-    provider: "mistral",
-    pricing: {
-      inputUsdPerMillionToken: 0.04,
-      outputUsdPerMillionToken: 0.04
-    }
-  },
-  {
-    id: "mistral-small-4",
-    provider: "mistral",
-    pricing: {
-      inputUsdPerMillionToken: 0.1,
-      outputUsdPerMillionToken: 0.3
-    }
-  },
-  {
-    id: "mistral-large-2",
-    provider: "mistral",
-    pricing: {
-      inputUsdPerMillionToken: 2.0,
-      outputUsdPerMillionToken: 6.0
-    }
-  }
 ] as const satisfies SupportedChatModelDefinition[];
 
 export type SupportedChatModel = (typeof SUPPORTED_CHAT_MODELS)[number];
