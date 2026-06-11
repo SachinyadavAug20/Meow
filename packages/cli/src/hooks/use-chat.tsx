@@ -5,12 +5,10 @@ import {
 } from "@nightcode/shared";
 import { EventSourceParserStream } from "eventsource-parser/stream";
 import type { ClientResponse } from "hono/client";
-import { requestId } from "hono/request-id";
 import { apiClient } from "lib/api-client";
 import { getErrorMessage } from "lib/http-error";
 import prettyMs from "pretty-ms";
-import { useCallback, useRef, useState } from "react";
-import { string } from "zod";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ClientMessagePart = { type: "text"; text: string };
 export type Message =
@@ -230,5 +228,47 @@ export function useChat(sessionId: string, initialMessages: Message[]) {
           );
         },
       });
-    }, [runStream,sessionId]);
+    },
+    [runStream, sessionId],
+  );
+  // Auto-resume when convestaion end with a user message that has no reply
+  const hasAutoResumedRef = useRef(false);
+  useEffect(() => {
+    if (hasAutoResumedRef.current) return;
+    const last = initialMessages[initialMessages.length - 1];
+    if (!last || last.role !== "user") return;
+    hasAutoResumedRef.current = true;
+    void resume({ mode: last.mode, model: last.model });
+  }, [initialMessages, resume]);
+  const submit = useCallback(
+    async ({ userText, mode, model }: SubmitParams) => {
+      const userMessage: Message = {
+        id: crypto.randomUUID(),
+        role: "user",
+        content: userText,
+        mode,
+        model,
+      };
+      updateMessage((prev) => [...prev, userMessage]);
+      await runStream({
+        mode,
+        model,
+        request: async (controller) => {
+          return apiClient.chat[":sessionId"].$post(
+            {
+              param: { sessionId },
+              json: { content: userText, mode, model },
+            },
+            { init: { signal: controller.signal } },
+          );
+        },
+      });
+    }, [runStream,sessionId,updateMessage]);
+    const abort =useCallback(()=>{
+      const activeStream = ActiveStreamRef.current;
+      if(!activeStream) return;
+      ActiveStreamRef.current=null
+      setStreaming({status:"idle"})
+    },[])
+    return {message,streaming,submit,abort}
 }
