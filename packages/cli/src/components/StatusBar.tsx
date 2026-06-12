@@ -9,7 +9,7 @@ const StatusBar = () => {
       <text attributes={TextAttributes.DIM} fg={colors.dimSeparator}>
         &#8250;
       </text>
-      <text>ollama-mini</text>
+      <text>gemini-2.5-flash</text>
     </box>
   );
 };

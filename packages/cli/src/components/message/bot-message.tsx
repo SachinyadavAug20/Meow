@@ -31,11 +31,11 @@ export function BotMessage({
           <text fg={mode===Mode.PLAN?colors.planMode:colors.primary}>◉</text>
           <box flexDirection="row" gap={1}>
             <text>{mode===Mode.PLAN?"Plan":"Build"}</text>
-            <text attributes={TextAttributes.DIM} fg={colors.dimSeparator}>\uE0B2</text>
+            <text attributes={TextAttributes.DIM} fg={colors.dimSeparator}>&gt;</text>
             <text attributes={TextAttributes.DIM}>{model}</text>
             {duration && (
               <>
-            <text attributes={TextAttributes.DIM} fg={colors.dimSeparator}>\uE0B2</text>
+            <text attributes={TextAttributes.DIM} fg={colors.dimSeparator}>&gt;</text>
             <text attributes={TextAttributes.DIM}>{duration}</text>
               </>
 

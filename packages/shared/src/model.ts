@@ -98,7 +98,7 @@ export const SUPPORTED_CHAT_MODELS: SupportedChatModelDefinition[] = [
   },
 
   {
-    id: "gemini-2-5-flash-lite",
+    id: "gemini-2.5-flash-lite",
     provider: "google",
     pricing: {
       inputUsdPerMillionToken: 0.1,
@@ -106,7 +106,7 @@ export const SUPPORTED_CHAT_MODELS: SupportedChatModelDefinition[] = [
     }
   },
   {
-    id: "gemini-2-5-flash",
+    id: "gemini-2.5-flash",
     provider: "google",
     pricing: {
       inputUsdPerMillionToken: 0.15,
@@ -114,7 +114,7 @@ export const SUPPORTED_CHAT_MODELS: SupportedChatModelDefinition[] = [
     }
   },
   {
-    id: "gemini-2-5-pro", // Under 200k base token pricing tier
+    id: "gemini-2.5-pro", // Under 200k base token pricing tier
     provider: "google",
     pricing: {
       inputUsdPerMillionToken: 1.25,
@@ -138,5 +138,5 @@ export type SupportedChatModelId = SupportedChatModel["id"];
 export function findSupportedChatModel(modelId: string){
   return SUPPORTED_CHAT_MODELS.find((m)=> m.id===modelId)
 }
-export const DEFAULT_CHAT_MODEL_ID:SupportedChatModelId = "gpt-4o";
+export const DEFAULT_CHAT_MODEL_ID:SupportedChatModelId = "gemini-2.5-flash";
 
