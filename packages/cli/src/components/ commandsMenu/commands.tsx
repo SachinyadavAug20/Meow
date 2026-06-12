@@ -1,4 +1,4 @@
-import { ThemeDialogContent } from "../dialog";
+import { SessionDialogContent, ThemeDialogContent } from "../dialog";
 import type { Command } from "./command.types";
 
 export const COMMANDS: Command[] = [
@@ -37,7 +37,10 @@ export const COMMANDS: Command[] = [
     description: "Show your conversation history",
     value: "/session",
     action:(ctx)=>{
-      ctx.toast.show({message:"loading session...",variant:"success",duration:3000})
+      ctx.dialog.open({
+        title:"Session",
+        children:<SessionDialogContent/>
+      })
     }
   },
   {

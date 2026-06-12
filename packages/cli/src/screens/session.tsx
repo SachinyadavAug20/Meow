@@ -99,6 +99,7 @@ function SessionChat({ session }: { session: SessionData }) {
       }
       loading={streaming.status === "streaming"}
       interruptible={streaming.status==="streaming"}
+      inputDisabled={streaming.status === "streaming"}
     >
       {message.map((msg) => (
         <ChatMessage key={msg.id} msg={msg} />

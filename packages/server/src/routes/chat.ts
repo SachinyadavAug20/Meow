@@ -231,7 +231,6 @@ const app = new Hono()
       console.error("Database error:", err);
       return c.json({ error: "Internal server error" }, 500);
     }
-
     const data = c.req.valid("json");
     await db.message.create({
       data: {
