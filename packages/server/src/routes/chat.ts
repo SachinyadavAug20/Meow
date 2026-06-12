@@ -14,7 +14,7 @@ import { defaultPlugin } from "hono/ssg";
 
 const submitSchema = z.object({
   content: z.string(),
-  mode: z.enum(Mode),
+  mode: z.enum(["BUILD", "PLAN"]),
   model: z.string().refine(isSupportedChatModel, "Unsupported model"),
 });
 const submitValidator = zValidator("json", submitSchema, (result, c) => {
@@ -186,16 +186,16 @@ const app = new Hono()
           stream.onAbort(() => {
             abortController.abort();
           });
-          try{
-          await streamAIResponse(stream, {
-            sessionId,
-            model: String(lastMessage.model),
-            history,
-            mode: lastMessage.mode,
-            abortController,
-            message: "",
-          });
-          }finally{
+          try {
+            await streamAIResponse(stream, {
+              sessionId,
+              model: String(lastMessage.model),
+              history,
+              mode: lastMessage.mode,
+              abortController,
+              message: "",
+            });
+          } finally {
             activeResumeSessionIds.delete(sessionId);
           }
         },
@@ -216,14 +216,22 @@ const app = new Hono()
     }
   })
   .post("/:sessionId", submitValidator, async (c) => {
-    const sessionId = c.req.param("sessionId");
-    const session = await db.session.findUnique({
-      where: { id: sessionId },
-      include: { message: { orderBy: { createdAt: "asc" } } },
-    });
-    if (!session) {
-      return c.json({ error: "Session not found" }, 404);
+    let sessionId, session;
+    try {
+      sessionId = c.req.param("sessionId");
+      if (!sessionId) return c.json({ error: "invalid session id" }, 400);
+      session = await db.session.findUnique({
+        where: { id: sessionId },
+        include: { message: { orderBy: { createdAt: "asc" } } },
+      });
+      if (!session) {
+        return c.json({ error: "Session not found" }, 404);
+      }
+    } catch (err) {
+      console.error("Database error:", err);
+      return c.json({ error: "Internal server error" }, 500);
     }
+
     const data = c.req.valid("json");
     await db.message.create({
       data: {
@@ -244,18 +252,21 @@ const app = new Hono()
       },
     ]);
     const abortController = new AbortController();
-    return streamSSE(c, async (stream) => {
-      stream.onAbort(() => {
-        abortController.abort();
-      });
-      await streamAIResponse(stream, {
-        sessionId,
-        model: data.model,
-        message: data.content,
-        history,
-        mode: data.mode,
-        abortController,
-      });
+    return streamSSE(
+      c,
+      async (stream) => {
+        stream.onAbort(() => {
+          abortController.abort();
+        });
+        await streamAIResponse(stream, {
+          sessionId,
+          model: data.model,
+          message: data.content,
+          history,
+          mode: data.mode,
+          abortController,
+        });
+      },
       async (err: Error, stream: any) => {
         const message = err instanceof Error ? err.message : String(err);
         const errorEvent: ChatStreamEvent = { type: "error", message };
@@ -263,8 +274,8 @@ const app = new Hono()
           event: "error",
           data: JSON.stringify(errorEvent),
         });
-      };
-    });
+      },
+    );
   });
 
 export default app;

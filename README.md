@@ -2,6 +2,10 @@
 
 timeline:
 
+as of 12-6-2026 : AI chat with interrupt option
+
+![screenshot](Documentation/screenshots/5.png)
+
 as of 6-6-2026 : UI for new chat session
 
 ![screenshot](Documentation/screenshots/4.png)

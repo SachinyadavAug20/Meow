@@ -14,6 +14,9 @@ import {
 } from "@nightcode/shared";
 import { useChat } from "src/hooks/use-chat";
 import type { Message, ClientMessagePart } from "../hooks/use-chat";
+import { useKeyboardLayer } from "../providers/keyboard-layer";
+import { MessageStatus } from "@meow/database";
+import { useKeyboard } from "@opentui/react";
 
 type SessionData = InferResponseType<
   (typeof apiClient.sessions)[":id"]["$get"],
@@ -34,9 +37,8 @@ function mapDbMessages(dbMessages: SessionData["message"]): Message[] {
         role: "user",
         content: m.content,
         mode: m.mode,
-        model: m.model,
+        model: m.model as SupportedChatModelId,
       };
-
     return {
       id: m.id,
       role: "assistant",
@@ -47,6 +49,7 @@ function mapDbMessages(dbMessages: SessionData["message"]): Message[] {
       ...(m.duration != null
         ? { duration: prettyMilliseconds(m.duration * 1000) }
         : {}),
+      interrupted: m.status === MessageStatus.INTERRUPTED,
     };
   });
 }
@@ -64,12 +67,14 @@ function ChatMessage({ msg }: { msg: Message }) {
       model={msg.model}
       mode={msg.mode}
       duration={String(msg.duration)}
+      interrupted={msg.interrupted}
     />
   );
 }
 function SessionChat({ session }: { session: SessionData }) {
   const [initialMessages] = useState(() => mapDbMessages(session.message));
-  const { message, streaming, submit, abort } = useChat(
+  const { isTopLayer } = useKeyboardLayer();
+  const { message, streaming, submit, abort, interrupt } = useChat(
     session.id,
     initialMessages,
   );
@@ -77,25 +82,36 @@ function SessionChat({ session }: { session: SessionData }) {
   useEffect(() => {
     return () => abort();
   }, [abort]);
+  useKeyboard((key) => {
+    if (
+      key.name === "escape" &&
+      isTopLayer("base") &&
+      streaming.status === "streaming"
+    ) {
+      key.preventDefault();
+      interrupt();
+    }
+  });
   return (
     <SessionShell
-      onSubmit={(text:string) =>
+      onSubmit={(text: string) =>
         submit({ userText: text, mode: "BUILD", model: DEFAULT_CHAT_MODEL_ID })
       }
-      loading={streaming.status==="streaming"}
+      loading={streaming.status === "streaming"}
+      interruptible={streaming.status==="streaming"}
     >
-    {message.map((msg)=>(
-      <ChatMessage key={msg.id} msg={msg}/>
-    ))}
-    {streaming.status==="streaming" && streaming.part.length>0 && (
-      // to show stream when streaming when streaming done message will go to data base and show in above message
-      <BotMessage
-        parts={streaming.part}
-        model={streaming.model}
-        mode={streaming.mode}
-        streaming
-      />
-    )}
+      {message.map((msg) => (
+        <ChatMessage key={msg.id} msg={msg} />
+      ))}
+      {streaming.status === "streaming" && streaming.part.length > 0 && (
+        // to show stream when streaming when streaming done message will go to data base and show in above message
+        <BotMessage
+          parts={streaming.part}
+          model={streaming.model}
+          mode={streaming.mode}
+          streaming
+        />
+      )}
     </SessionShell>
   );
 }
@@ -149,5 +165,5 @@ export function Session() {
       </SessionShell>
     );
   }
-  return <SessionChat key={session.id} session={session}/>
+  return <SessionChat key={session.id} session={session} />;
 }

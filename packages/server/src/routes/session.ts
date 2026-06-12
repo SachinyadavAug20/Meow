@@ -56,6 +56,7 @@ const app = new Hono()
   })
   .post("/", createSessionValidator, async (c) => {
     const { initialMessage, ...data } = await c.req.valid("json"); // not only get json it give validated data based on given validator
+
     const session = await db.session.create({
       data:{
         ...data,

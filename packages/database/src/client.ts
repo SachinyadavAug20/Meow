@@ -12,5 +12,11 @@ const dataBaseURL=process.env.DATABASE_URL;
 if(!dataBaseURL){
   throw new Error("DATABASE_URL is not set")
 }
-const adapter=new PrismaPg({connectionString:dataBaseURL})
+
+const adapter = new PrismaPg({
+  connectionString: dataBaseURL,
+  max: 5,
+  idleTimeoutMillis: 10000,
+})
+
 export const db=new PrismaClient({adapter})
