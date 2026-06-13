@@ -36,8 +36,7 @@ export function DialogSearchList<T>({
   const scrollRef = useRef<ScrollBoxRenderable>(null);
   const { isTopLayer } = useKeyboardLayer();
 
-  const handleContentChange = useCallback(() => {
-    const text = inputref.current?.value ?? "";
+  const handleContentChange = useCallback((text: string) => {
     setSearchQuery(text);
     setSelectedIndex(0);
     const scroll = scrollRef.current;
@@ -85,7 +84,7 @@ export function DialogSearchList<T>({
         ref={inputref}
         placeholder={placeholder}
         focused
-        onContentChange={handleContentChange}
+        onChange={handleContentChange}
       />
       {filteredItems.length === 0 ? (
         <text attributes={TextAttributes.DIM}>{emptyText}</text>

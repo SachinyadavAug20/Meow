@@ -35,6 +35,7 @@ export const ThemeDialogContent=()=>{
     onSelect={handleSelectTheme}
     onHighlight={handleHighlight}
     filterFn={(t,query)=>t.name.toLowerCase().includes(query.toLowerCase())}
+
     renderItem={(theme,isSelected)=>{
       return (
         <text selectable={false} fg={isSelected?"black":"white"}>

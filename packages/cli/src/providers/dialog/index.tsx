@@ -57,6 +57,7 @@ type DialogProps = {
 function Dialog({ currentDialog, close }: DialogProps) {
   const { isTopLayer } = useKeyboardLayer();
   const dimesion = useTerminalDimensions();
+  const {colors}=useTheme()
   useKeyboard((key) => {
     if (!currentDialog || !isTopLayer("dialog")) return; // if no dialog open or not on top layer
     if (key.name === "escape") {
@@ -67,7 +68,6 @@ function Dialog({ currentDialog, close }: DialogProps) {
     return null;
   }
   const { title, children } = currentDialog;
-  const {colors}=useTheme()
   return (
     <box
       position="absolute"

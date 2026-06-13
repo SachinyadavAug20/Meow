@@ -6,7 +6,6 @@ import { getErrorMessage } from "lib/http-error";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDialog } from "src/providers/dialog";
-import { useToast } from "src/providers/toast";
 import { DialogSearchList } from "../dialog-serarch-list";
 
 type Session = InferResponseType<
@@ -19,7 +18,6 @@ export const SessionDialogContent = () => {
   const [loading, setLoading] = useState(true);
   const { close } = useDialog();
   const navigate = useNavigate();
-  const { show } = useToast();
   useEffect(() => {
     let ignore = false;
     const fetchSession = async () => {
@@ -35,11 +33,6 @@ export const SessionDialogContent = () => {
         }
       } catch (error) {
         if (!ignore) {
-          show({
-            variant: "error",
-            message:
-              error instanceof Error ? error.message : "Failed to get sessions",
-          });
           close();
         }
       }
@@ -48,11 +41,11 @@ export const SessionDialogContent = () => {
     return () => {
       ignore = true;
     };
-  }, [close, show]);
+  }, [close]);
   const handleSelect = useCallback(
     (session: Session) => {
       close();
-      navigate(`/sessions/${session.id}`);
+      navigate(`/session/${session.id}`);
     },
     [close, navigate],
   );
@@ -73,13 +66,12 @@ export const SessionDialogContent = () => {
           <text selectable={false} fg={isSelected ? "black" : "white"}>
             {session.title}
           </text>
-          <box flexGrow={1} /> {/* spacing*/}
+          <box flexGrow={1}></box>
           <text
             selectable={false}
             fg={isSelected ? "black" : undefined}
             attributes={TextAttributes.DIM}
           >
-            {" "}
             {format(new Date(session.createdAt), "hh:mm a")}
           </text>
         </>
@@ -87,6 +79,6 @@ export const SessionDialogContent = () => {
       getKey={(s) => s.id}
       placeholder="Search sessions"
       emptyText="No matching session"
-    ></DialogSearchList>
+    />
   );
 };

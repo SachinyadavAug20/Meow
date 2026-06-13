@@ -10,6 +10,7 @@ import { useToast } from "../providers/toast";
 import { useKeyboardLayer } from "../providers/keyboard-layer";
 import { useDialog } from "../providers/dialog";
 import { useTheme } from "../providers/theme";
+import { useNavigate } from "react-router";
 
 interface Prop {
   onSubmit: (text: string) => void;
@@ -29,6 +30,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
   const toast = useToast();
   const dialog = useDialog();
   const { isTopLayer, setResponder } = useKeyboardLayer();
+  const navigate = useNavigate();
 
   const {
     showCommandMenu,
@@ -71,12 +73,13 @@ export function InputBar({ onSubmit, disabled }: Prop) {
           exit: () => renderer.destroy(),
           toast,
           dialog,
+          navigate,
         });
       } else {
         textarea.insertText(command.value + " ");
       }
     },
-    [renderer, toast,dialog],
+    [renderer, toast, dialog],
   );
 
   const handleCommandExcute = useCallback(
@@ -98,18 +101,18 @@ export function InputBar({ onSubmit, disabled }: Prop) {
   };
 
   useEffect(() => {
-    setResponder("base",()=>{
-      if(disabled) return false;
+    setResponder("base", () => {
+      if (disabled) return false;
       const textarea = textareaRef.current;
-      if(textarea && textarea.plainText.length>0){
+      if (textarea && textarea.plainText.length > 0) {
         textarea.setText("");
-        return true
+        return true;
       }
-      return false
+      return false;
     });
-    return ()=> setResponder("base",null);
-  }, [disabled,setResponder]);
-  const {colors}=useTheme();
+    return () => setResponder("base", null);
+  }, [disabled, setResponder]);
+  const { colors } = useTheme();
 
   return (
     <box width="100%" alignItems="center">

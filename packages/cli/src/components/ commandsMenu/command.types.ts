@@ -5,6 +5,7 @@ export interface commandContext{
   exit:()=>void;
   toast:ToastContextValue;
   dialog:DialogContextValue;
+  navigate:(path:string)=>void
 }
 
 export interface Command{
