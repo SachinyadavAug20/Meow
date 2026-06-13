@@ -1,7 +1,13 @@
 import "opentui-spinner/react"
 import { useTheme } from "../providers/theme";
+import { Mode } from "@meow/database";
 
-export function Spinner(){
+type Props={
+  mode?:Mode
+}
+
+export function Spinner({mode=Mode.BUILD}:Props) {
   const {colors}=useTheme();
-  return <spinner name="binary" color={colors.primary} />
+  const activeColor=mode===Mode.PLAN?colors.planMode:colors.primary
+  return <spinner name="binary" color={activeColor} />
 }

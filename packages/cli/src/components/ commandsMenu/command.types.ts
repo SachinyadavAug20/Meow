@@ -9,6 +9,7 @@ export interface commandContext{
   dialog:DialogContextValue;
   navigate:(path:string)=>void;
   mode:Mode;
+  model?:SupportedChatModelId;
   setMode: (mode: Mode) => void;
   setModel: (model: SupportedChatModelId) => void;
 }

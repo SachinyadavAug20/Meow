@@ -12,7 +12,6 @@ import { useDialog } from "../providers/dialog";
 import { useTheme } from "../providers/theme";
 import { useNavigate } from "react-router";
 import { usePromptConfig } from "src/providers/prompt-config";
-import { isToday } from "date-fns";
 import { Mode } from "@meow/database";
 
 interface Prop {
@@ -27,7 +26,7 @@ export const TEXTAREA_KEY_BINDINGS: KeyBinding[] = [
   { name: "enter", shift: true, action: "newline" },
 ];
 export function InputBar({ onSubmit, disabled }: Prop) {
-  const { mode, toggleMode, setMode, setModel } = usePromptConfig();
+  const { mode, toggleMode, setMode, setModel,model } = usePromptConfig();
   const textareaRef = useRef<TextareaRenderable>(null);
   const onSubmitRef = useRef<() => void>(() => {});
   const renderer = useRenderer();
@@ -81,6 +80,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
           mode,
           setMode,
           setModel,
+          model
         });
       } else {
         textarea.insertText(command.value + " ");

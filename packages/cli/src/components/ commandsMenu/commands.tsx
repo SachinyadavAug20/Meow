@@ -1,4 +1,10 @@
-import { SessionDialogContent, ThemeDialogContent } from "../dialog";
+import { DEFAULT_CHAT_MODEL_ID, SUPPORTED_CHAT_MODELS } from "@nightcode/shared";
+import {
+  AgentsDialogContent,
+  ModelDialogContent,
+  SessionDialogContent,
+  ThemeDialogContent,
+} from "../dialog";
 import type { Command } from "./command.types";
 
 export const COMMANDS: Command[] = [
@@ -6,103 +12,135 @@ export const COMMANDS: Command[] = [
     name: "new",
     description: "Start a new conversation",
     value: "/new",
-    action:(ctx)=>{
+    action: (ctx) => {
       ctx.navigate("/");
-    }
+    },
   },
   {
     name: "agents",
     description: "Switch agent",
     value: "/agents",
-    action:(ctx)=>{
+    action: (ctx) => {
       ctx.dialog.open({
-        title:"Select Agent",
-        children:<text>Agent selection ...</text>
-      })
-    }
+        title: "Select Modes",
+        children: (
+          <AgentsDialogContent currentMode={ctx.mode} onSelect={ctx.setMode} />
+        ),
+      });
+    },
   },
   {
     name: "model",
     description: "Select a model",
     value: "/model",
-    action:(ctx)=>{
+    action: (ctx) => {
       ctx.dialog.open({
-        title:"Select Model",
-        children:<text>Model selection ...</text>
-      })
-    }
+        title: "Select Models",
+        children: (
+          <ModelDialogContent
+            Models={SUPPORTED_CHAT_MODELS.map((model) => model.id)}
+            currentModel={ctx.model || DEFAULT_CHAT_MODEL_ID}
+            onSelect={ctx.setModel}
+          />
+        ),
+      });
+    },
   },
   {
     name: "session",
     description: "Show your conversation history",
     value: "/session",
-    action:(ctx)=>{
+    action: (ctx) => {
       ctx.dialog.open({
-        title:"Session",
-        children:<SessionDialogContent/>
-      })
-    }
+        title: "Session",
+        children: <SessionDialogContent />,
+      });
+    },
   },
   {
     name: "theme",
     description: "Change the color theme",
     value: "/theme",
-    action:(ctx)=>{
+    action: (ctx) => {
       ctx.dialog.open({
-        title:"Select Theme",
-        children:<ThemeDialogContent/>
-      })
-    }
+        title: "Select Theme",
+        children: <ThemeDialogContent />,
+      });
+    },
   },
   {
     name: "login",
     description: "Sign in to your account",
     value: "/login",
-    action:(ctx)=>{
-      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
-    }
+    action: (ctx) => {
+      ctx.toast.show({
+        message: "Opening browser...",
+        variant: "success",
+        duration: 3000,
+      });
+    },
   },
   {
     name: "logout",
     description: "Sign out of your account",
     value: "/logout",
-    action:(ctx)=>{
-      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
-    }
+    action: (ctx) => {
+      ctx.toast.show({
+        message: "Opening browser...",
+        variant: "success",
+        duration: 3000,
+      });
+    },
   },
   {
     name: "upgrade",
     description: "Buy more credits",
     value: "/upgrade",
-    action:(ctx)=>{
-      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
-    }
+    action: (ctx) => {
+      ctx.toast.show({
+        message: "Opening browser...",
+        variant: "success",
+        duration: 3000,
+      });
+    },
   },
   {
     name: "usage",
     description: "Open billing portal in your browser",
     value: "/usage",
-    action:(ctx)=>{
-      ctx.toast.show({message:"Opening browser...",variant:"success",duration:3000})
-    }
+    action: (ctx) => {
+      ctx.toast.show({
+        message: "Opening browser...",
+        variant: "success",
+        duration: 3000,
+      });
+    },
   },
   {
     name: "help",
     description: "Show help",
     value: "/help",
-    action:(ctx)=>{
-      ctx.toast.show({message:"help menu...",variant:"success",duration:3000})
-    }
+    action: (ctx) => {
+      ctx.toast.show({
+        message: "help menu...",
+        variant: "success",
+        duration: 3000,
+      });
+    },
   },
   {
     name: "exit",
     description: "Exit the application",
     value: "/exit",
     action: (ctx) => {
-      ctx.toast.show({message:"Thanks for using meow",variant:"success",duration:3000})
-      setTimeout(()=>{
+      ctx.toast.show({
+        message: "Thanks for using meow",
+        variant: "success",
+        duration: 3000,
+      });
+      setTimeout(() => {
         ctx.exit();
-      },1000)
+      }, 1000);
     },
   },
 ];
