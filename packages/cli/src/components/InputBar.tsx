@@ -131,7 +131,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
 
   return (
     <box width="100%" alignItems="center">
-      <box border={["left"]} borderColor={mode===Mode.BUILD?colors.primary:colors.planMode} width="100%">
+      <box border={["left"]} borderColor={mode === Mode.BUILD ? colors.primary : mode === Mode.PLAN ? colors.planMode :colors.learnMode} width="100%">
         <box
           position="relative"
           justifyContent="center"

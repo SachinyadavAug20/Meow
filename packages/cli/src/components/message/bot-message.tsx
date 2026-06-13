@@ -39,16 +39,22 @@ export function BotMessage({
                 ? undefined
                 : mode === Mode.PLAN
                   ? colors.planMode
-                  : colors.primary
+                  : mode === Mode.LEARN
+                    ? colors.learnMode
+                    : colors.primary
             }
             attributes={interrupted ? TextAttributes.DIM : 0}
           >
             ◉
           </text>
           <box flexDirection="row" gap={1}>
-            <text attributes={interrupted ? TextAttributes.DIM : 0}>
-              {mode === Mode.PLAN ? "Plan" : "Build"}
-            </text>
+            <text attributes={interrupted ? TextAttributes.DIM : 0}></text>
+            {mode === Mode.PLAN
+              ? "Plan"
+              : mode === Mode.LEARN
+                ? "Learn"
+                : "Build"}
+
             <text attributes={TextAttributes.DIM} fg={colors.dimSeparator}>
               &gt;
             </text>

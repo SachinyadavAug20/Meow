@@ -1,20 +1,15 @@
 import { Mode, MessageStatus, db } from "@meow/database";
 import { Hono } from "hono";
-import { record, z } from "zod";
+import { z } from "zod";
 import { isSupportedChatModel, resolveChatModel } from "../lib/models";
 import { zValidator } from "@hono/zod-validator";
-import {
-  MESSAGE_MATCHER_IS_ALREADY_BUILT,
-  type ParamIndexMap,
-} from "hono/router";
-import { stream, streamSSE } from "hono/streaming";
+import { streamSSE } from "hono/streaming";
 import { streamText as aiStreamText } from "ai";
 import type { ChatStreamEvent } from "@meow/shared";
-import { defaultPlugin } from "hono/ssg";
 
 const submitSchema = z.object({
   content: z.string(),
-  mode: z.enum(["BUILD", "PLAN"]),
+  mode: z.enum(["BUILD", "PLAN","LEARN"]),
   model: z.string().refine(isSupportedChatModel, "Unsupported model"),
 });
 const submitValidator = zValidator("json", submitSchema, (result, c) => {

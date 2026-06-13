@@ -31,7 +31,9 @@ export function PromptConfigProvider({ children }: PromptConfigProviderProps) {
     DEFAULT_CHAT_MODEL_ID,
   );
   const toggleMode = useCallback(() => {
-    setMode((m) => (m === Mode.BUILD ? Mode.PLAN : Mode.BUILD));
+    setMode((m) =>
+      m === Mode.BUILD ? Mode.PLAN : m === Mode.PLAN ? Mode.LEARN : Mode.BUILD,
+    );
   }, []);
   return (
     <PrompConfigContext.Provider

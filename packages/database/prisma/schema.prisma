@@ -20,6 +20,7 @@ enum Role {
 enum Mode{
   BUILD
   PLAN
+  LEARN
 }
 enum MessageStatus{
   COMPLETE

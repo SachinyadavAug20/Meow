@@ -7,12 +7,14 @@ import { SessionShell } from "../components/session-shell";
 import { useToast } from "src/providers/toast";
 import { apiClient } from "lib/api-client";
 import { getErrorMessage } from "lib/http-error";
+import { usePromptConfig } from "src/providers/prompt-config";
 
 const newSessionStateSchema = z.object({
   message: z.string(),
 });
 
 export function NewSession() {
+  const {mode}=usePromptConfig();
   const navigation = useNavigate();
   const location = useLocation();
   const toast = useToast();
@@ -44,7 +46,7 @@ export function NewSession() {
             initialMessage: {
               role: "USER",
               content: state.message,
-              mode: "BUILD",
+              mode,
               model: DEFAULT_CHAT_MODEL_ID,
             },
           },

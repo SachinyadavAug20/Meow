@@ -10,7 +10,8 @@ export type ThemeColors={
   surface:string,
   dialogSurface:string,
   thinkingBorder:string,
-  dimSeparator:string
+  dimSeparator:string,
+  learnMode:string,
 }
 
 export type Theme={
@@ -23,7 +24,8 @@ export const THEMES: Theme[] = [
     name: "NightFox",
     colors: {
       primary: "#56D6C2",
-      planMode: "#CF8EF4",
+      planMode: "#E0AF68",      // Warm Amber
+      learnMode: "#81A1C1",     // Frost Blue
       selection: "#89B4FA",
       thinking: "#CF8EF4",
       success: "#82E0AA",
@@ -40,7 +42,8 @@ export const THEMES: Theme[] = [
     name: "OneDark",
     colors: {
       primary: "#61AFEF",
-      planMode: "#C678DD",
+      planMode: "#D19A66",      // Vivid Orange
+      learnMode: "#4KC3D0",     // Calm Teal
       selection: "#3E4452",
       thinking: "#C678DD",
       success: "#98C379",
@@ -57,7 +60,8 @@ export const THEMES: Theme[] = [
     name: "Nord",
     colors: {
       primary: "#88C0D0",
-      planMode: "#B48EAD",
+      planMode: "#EBCB8B",      // Nord Yellow
+      learnMode: "#A3BE8C",     // Nord Sage Green
       selection: "#4C566A",
       thinking: "#B48EAD",
       success: "#A3BE8C",
@@ -74,7 +78,8 @@ export const THEMES: Theme[] = [
     name: "Tokyonight",
     colors: {
       primary: "#7AA2F7",
-      planMode: "#BB9AF7",
+      planMode: "#FF9E3B",      // Autumn Orange
+      learnMode: "#1ABC9C",     // Deep Turquoise
       selection: "#364A82",
       thinking: "#BB9AF7",
       success: "#9ECE6A",
@@ -91,7 +96,8 @@ export const THEMES: Theme[] = [
     name: "SolarizedDark",
     colors: {
       primary: "#268BD2",
-      planMode: "#6C71C4",
+      planMode: "#CB4B16",      // Solarized Orange
+      learnMode: "#2AA198",     // Solarized Cyan
       selection: "#073642",
       thinking: "#6C71C4",
       success: "#859900",
@@ -108,10 +114,11 @@ export const THEMES: Theme[] = [
     name: "Synthwave84",
     colors: {
       primary: "#F877F8",
-      planMode: "#FFD300",
+      planMode: "#FFD300",      // Retained Neon Yellow for Planning
+      learnMode: "#39FF14",     // Neon Focus Green for Learning
       selection: "#4B0082",
-      thinking: "#FFD300",
-      success: "#39FF14",
+      thinking: "#FF628C",      // Swapped Thinking to Hot Pink
+      success: "#00FFEF",
       error: "#FF073A",
       info: "#F877F8",
       background: "#2D2A4F",
@@ -125,7 +132,8 @@ export const THEMES: Theme[] = [
     name: "Palenight",
     colors: {
       primary: "#82AAFF",
-      planMode: "#C792EA",
+      planMode: "#F78C6C",      // Coral Orange
+      learnMode: "#4EE0D0",     // Soft Bright Teal
       selection: "#4A4D62",
       thinking: "#C792EA",
       success: "#C3E88D",
@@ -142,7 +150,8 @@ export const THEMES: Theme[] = [
     name: "CatppuccinMacchiato",
     colors: {
       primary: "#8AADF4",
-      planMode: "#C6A0F6",
+      planMode: "#F5A97F",      // Catppuccin Peach
+      learnMode: "#94E2D5",     // Catppuccin Mint
       selection: "#414559",
       thinking: "#C6A0F6",
       success: "#A6DA95",
@@ -159,10 +168,11 @@ export const THEMES: Theme[] = [
     name: "Dracula",
     colors: {
       primary: "#8BE9FD",
-      planMode: "#FF79C6",
+      planMode: "#FFB86C",      // Dracula Orange
+      learnMode: "#50FA7B",     // Bright Dracula Green
       selection: "#44475A",
       thinking: "#FF79C6",
-      success: "#50FA7B",
+      success: "#F1FA8C",       // Mapped to soft yellow
       error: "#FF5555",
       info: "#8BE9FD",
       background: "#282A36",
@@ -176,7 +186,8 @@ export const THEMES: Theme[] = [
     name: "GruvboxDark",
     colors: {
       primary: "#83A598",
-      planMode: "#D3869B",
+      planMode: "#FE8019",      // Gruvbox Bright Orange
+      learnMode: "#8EC07C",     // Gruvbox Aqua
       selection: "#3C3836",
       thinking: "#D3869B",
       success: "#B8BB26",
@@ -193,7 +204,8 @@ export const THEMES: Theme[] = [
     name: "AtomDark",
     colors: {
       primary: "#52EDFF",
-      planMode: "#C594C5",
+      planMode: "#E5C07B",      // Soft Gold
+      learnMode: "#73DACA",     // Electric Mint
       selection: "#3E4452",
       thinking: "#C594C5",
       success: "#9DDD7F",
@@ -210,7 +222,8 @@ export const THEMES: Theme[] = [
     name: "AyuDark",
     colors: {
       primary: "#59C2FF",
-      planMode: "#D4BFFF",
+      planMode: "#FFB454",      // Ayu Warm Gold
+      learnMode: "#95E6CB",     // Ayu Mint Green
       selection: "#363C4A",
       thinking: "#D4BFFF",
       success: "#BAE67E",
@@ -227,10 +240,11 @@ export const THEMES: Theme[] = [
     name: "MonokaiPro",
     colors: {
       primary: "#78DCE8",
-      planMode: "#FF6188",
+      planMode: "#FC9867",      // Monokai Tangerine
+      learnMode: "#A9DC76",     // Monokai Green
       selection: "#49483E",
       thinking: "#FF6188",
-      success: "#A9DC76",
+      success: "#78DCE8",       // Mapped to sky blue
       error: "#FC4040",
       info: "#78DCE8",
       background: "#2D2A2E",
@@ -244,7 +258,8 @@ export const THEMES: Theme[] = [
     name: "OceanicNext",
     colors: {
       primary: "#6699CC",
-      planMode: "#C594C7",
+      planMode: "#F99157",      // Oceanic Orange
+      learnMode: "#5FB3B3",     // Oceanic Teal
       selection: "#3B4252",
       thinking: "#C594C7",
       success: "#99C794",
@@ -261,7 +276,8 @@ export const THEMES: Theme[] = [
     name: "ArcDark",
     colors: {
       primary: "#5294E2",
-      planMode: "#AB75CE",
+      planMode: "#46AFA5",      // Seafoam/Teal
+      learnMode: "#7BC8A4",     // Soft Mint Green
       selection: "#343E4B",
       thinking: "#AB75CE",
       success: "#8BBF4A",
@@ -278,7 +294,8 @@ export const THEMES: Theme[] = [
     name: "Andromeda",
     colors: {
       primary: "#BB80B3",
-      planMode: "#00C5C7",
+      planMode: "#FFE66D",      // Canary Plan Yellow
+      learnMode: "#00E2B2",     // Cyber Aquamarine
       selection: "#3A3E4E",
       thinking: "#00C5C7",
       success: "#85E86E",
@@ -295,7 +312,8 @@ export const THEMES: Theme[] = [
     name: "Cobalt2",
     colors: {
       primary: "#0088FF",
-      planMode: "#FF628C",
+      planMode: "#FF9D00",      // Golden Amber
+      learnMode: "#2AFFD0",     // Electric Seafoam
       selection: "#1F3B66",
       thinking: "#FF628C",
       success: "#3AD900",
@@ -308,6 +326,6 @@ export const THEMES: Theme[] = [
       dimSeparator: "#8A9BAA",
     }
   }
-]
+];
 
 export const DEFAULT_THEME:Theme=THEMES[0]!
