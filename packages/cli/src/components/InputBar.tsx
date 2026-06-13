@@ -11,6 +11,9 @@ import { useKeyboardLayer } from "../providers/keyboard-layer";
 import { useDialog } from "../providers/dialog";
 import { useTheme } from "../providers/theme";
 import { useNavigate } from "react-router";
+import { usePromptConfig } from "src/providers/prompt-config";
+import { isToday } from "date-fns";
+import { Mode } from "@meow/database";
 
 interface Prop {
   onSubmit: (text: string) => void;
@@ -24,6 +27,7 @@ export const TEXTAREA_KEY_BINDINGS: KeyBinding[] = [
   { name: "enter", shift: true, action: "newline" },
 ];
 export function InputBar({ onSubmit, disabled }: Prop) {
+  const { mode, toggleMode, setMode, setModel } = usePromptConfig();
   const textareaRef = useRef<TextareaRenderable>(null);
   const onSubmitRef = useRef<() => void>(() => {});
   const renderer = useRenderer();
@@ -74,12 +78,15 @@ export function InputBar({ onSubmit, disabled }: Prop) {
           toast,
           dialog,
           navigate,
+          mode,
+          setMode,
+          setModel,
         });
       } else {
         textarea.insertText(command.value + " ");
       }
     },
-    [renderer, toast, dialog],
+    [renderer, toast, dialog, navigate, mode, setMode, setModel],
   );
 
   const handleCommandExcute = useCallback(
@@ -99,6 +106,14 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     }
     handleSubmit();
   };
+  useKeyboard((key)=>{
+    if(disabled) return;
+    if(!isTopLayer("base")) return;
+    if(key.name==='tab'){
+      key.preventDefault();
+      toggleMode();
+    }
+  })
 
   useEffect(() => {
     setResponder("base", () => {
@@ -116,7 +131,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
 
   return (
     <box width="100%" alignItems="center">
-      <box border={["left"]} borderColor={colors.primary} width="100%">
+      <box border={["left"]} borderColor={mode===Mode.BUILD?colors.primary:colors.planMode} width="100%">
         <box
           position="relative"
           justifyContent="center"

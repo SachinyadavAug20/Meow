@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDialog } from "src/providers/dialog";
 import { DialogSearchList } from "../dialog-serarch-list";
+import { useToast } from "src/providers/toast";
 
 type Session = InferResponseType<
   (typeof apiClient.sessions)["$get"],
@@ -18,6 +19,7 @@ export const SessionDialogContent = () => {
   const [loading, setLoading] = useState(true);
   const { close } = useDialog();
   const navigate = useNavigate();
+  const {show}=useToast();
   useEffect(() => {
     let ignore = false;
     const fetchSession = async () => {
@@ -33,6 +35,10 @@ export const SessionDialogContent = () => {
         }
       } catch (error) {
         if (!ignore) {
+          show({
+            variant:"error",
+            message:"Failed to get session",
+          })
           close();
         }
       }
