@@ -41,14 +41,15 @@ const ANTHROPIC_PROVIDER_OPTIONS: Partial<
 };
 const GOOGLE_PROVIDER_OPTIONS: Partial<Record<GoogleModelId, ProviderOptions>> =
   {
-    "gemini-2.5-flash-lite": {},
-    "gemini-2.5-flash": {},
+    "gemini-2.5-flash-lite": {
+    },
+    "gemini-2.5-flash": {
+    },
     "gemini-2.5-pro": {
       google: { thinkingConfig: { thinkingLevel: "high" } },
     },
     "gemini-3-pro-preview": {
       google: { thinkingConfig: { thinkingLevel: "high" } },
-
     },
   };
 const OPENAI_PROVIDER_OPTIONS: Partial<Record<OpenAIModelId, ProviderOptions>> =

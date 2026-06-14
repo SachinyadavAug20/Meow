@@ -73,7 +73,7 @@ function ChatMessage({ msg }: { msg: Message }) {
   );
 }
 function SessionChat({ session }: { session: SessionData }) {
-  const { mode } = usePromptConfig();
+  const { mode,model } = usePromptConfig();
   const [initialMessages] = useState(() => mapDbMessages(session.message));
   const { isTopLayer } = useKeyboardLayer();
   const { message, streaming, submit, abort, interrupt } = useChat(
@@ -97,7 +97,7 @@ function SessionChat({ session }: { session: SessionData }) {
   return (
     <SessionShell
       onSubmit={(text: string) =>
-        submit({ userText: text, mode, model: DEFAULT_CHAT_MODEL_ID })
+        submit({ userText: text, mode, model})
       }
       loading={streaming.status === "streaming"}
       interruptible={streaming.status === "streaming"}

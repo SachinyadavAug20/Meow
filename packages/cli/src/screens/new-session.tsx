@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import { useEffect, useMemo, useRef } from "react";
 import { z } from "zod";
-import { DEFAULT_CHAT_MODEL_ID } from "@meow/shared";
 import {  UserMessage } from "../components/message";
 import { SessionShell } from "../components/session-shell";
 import { useToast } from "src/providers/toast";
@@ -14,7 +13,7 @@ const newSessionStateSchema = z.object({
 });
 
 export function NewSession() {
-  const {mode}=usePromptConfig();
+  const {mode,model}=usePromptConfig();
   const navigation = useNavigate();
   const location = useLocation();
   const toast = useToast();
@@ -47,7 +46,7 @@ export function NewSession() {
               role: "USER",
               content: state.message,
               mode,
-              model: DEFAULT_CHAT_MODEL_ID,
+              model,
             },
           },
         });

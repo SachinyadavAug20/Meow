@@ -68,8 +68,8 @@ export function BotMessage({
                   paddingX={2}
                 >
                   <text attributes={TextAttributes.DIM}>
-                    <em fg={colors.thinking}>Thinking: </em>
-                    {part.text}
+                    <text fg={colors.thinking}>Thinking: </text>
+                    {part.text || " "}
                   </text>
                 </box>
               );
@@ -84,9 +84,9 @@ export function BotMessage({
                   paddingX={2}
                 >
                   <text attributes={TextAttributes.DIM}>
-                    <em fg={colors.thinking}>{formatToolName(part.name)}:</em>{" "}
-                    {formatToolArgs(part)}
-                    {part.status==='calling'?"...":""}
+                    <text fg={colors.thinking}>{formatToolName(part.name)}:</text>{" "}
+                    {formatToolArgs(part) || " "}
+                    {part.status === "calling" ? "..." : null}
                   </text>
                 </box>
               );
@@ -94,7 +94,7 @@ export function BotMessage({
             if(part.type==="text"){
               return(
                 <box key={`text-${j}`} width="100%" paddingX={3}>
-                  <text>{part.text}</text>
+                  <text>{part.text || " "}</text>
                 </box>
               )
             }
@@ -119,12 +119,13 @@ export function BotMessage({
             ◉
           </text>
           <box flexDirection="row" gap={1}>
-            <text attributes={interrupted ? TextAttributes.DIM : 0}></text>
-            {mode === Mode.PLAN
-              ? "Plan"
-              : mode === Mode.LEARN
-                ? "Learn"
-                : "Build"}
+            <text>
+              {mode === Mode.PLAN
+                ? "Plan"
+                : mode === Mode.LEARN
+                  ? "Learn"
+                  : "Build"}
+            </text>
 
             <text attributes={TextAttributes.DIM} fg={colors.dimSeparator}>
               &gt;
@@ -136,7 +137,7 @@ export function BotMessage({
                   &gt;
                 </text>
                 <text attributes={TextAttributes.DIM}>
-                  {interrupted ? "interrupted" : duration}
+                  {interrupted ? "interrupted" : duration || " "}
                 </text>
               </>
             )}

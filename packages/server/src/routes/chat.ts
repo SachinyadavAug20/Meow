@@ -10,7 +10,7 @@ import {
   type ChatStreamEvent,
   type MessagePart,
   toolCallArgsSchema,
-  messagePartSchema,
+  messagePartsSchema,
 } from "@meow/shared";
 
 const submitSchema = z.object({
@@ -82,7 +82,7 @@ async function streamAIResponse(
     if (fullText.length === 0 && parts.length === 0) return;
     // validate parts
     const validatedParts: Prisma.InputJsonValue | undefined =
-      parts.length > 0 ? messagePartSchema.parse(parts) : undefined;
+      parts.length > 0 ? messagePartsSchema.parse(parts) : undefined;
     const elaspsedMs = Date.now() - startTime;
     await db.message.create({
       data: {
@@ -193,7 +193,7 @@ async function streamAIResponse(
       .map((p) => p.text)
       .join("");
     const validatedParts: Prisma.InputJsonValue | undefined =
-      parts.length > 0 ? messagePartSchema.parse(parts) : undefined;
+      parts.length > 0 ? messagePartsSchema.parse(parts) : undefined;
     const assistantMessage = await db.message.create({
       data: {
         sessionId,
