@@ -8,12 +8,13 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target bun",
-    "postinstall":"bun run --cwd ../database db:generate"
+    "postinstall": "bun run --cwd ../database db:generate"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.82",
     "@ai-sdk/google": "^3.0.80",
     "@ai-sdk/openai": "^3.0.69",
+    "@ai-sdk/provider-utils": "^4.0.29",
     "@hono/zod-validator": "^0.8.0",
     "@meow/database": "workspace:*",
     "@meow/shared": "workspace:*",
