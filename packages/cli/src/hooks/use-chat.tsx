@@ -1,17 +1,25 @@
 import type { Mode } from "@meow/database";
-import {
-  chatStreamEventSchema,
-  type SupportedChatModelId,
-} from "@nightcode/shared";
+import { chatStreamEventSchema, type SupportedChatModelId, } from "@meow/shared";
 import { EventSourceParserStream } from "eventsource-parser/stream";
 import type { ClientResponse } from "hono/client";
 import { apiClient } from "lib/api-client";
 import { getErrorMessage } from "lib/http-error";
-import { a } from "node_modules/opentui-spinner/dist/index-9Y5uiGLf.d.mts";
 import prettyMs from "pretty-ms";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type ClientMessagePart = { type: "text"; text: string };
+export type ClientToolCallPart = {
+  type: "tool-call";
+  id: string;
+  name: string;
+  args: Record<string, unknown>;
+  result?: string;
+  status: "calling" | "done";
+};
+export type ClientMessagePart =
+  | { type: "reasoning"; text: string }
+  | { type: "text"; text: string }
+  | ClientToolCallPart;
+
 export type Message =
   | {
       id: string;
@@ -43,6 +51,7 @@ type streamingState =
       mode: Mode;
       model: SupportedChatModelId;
     };
+
 type ActiveStream = {
   requestId: string;
   controller: AbortController;
@@ -166,6 +175,34 @@ export function useChat(sessionId: string, initialMessages: Message[]) {
           break;
         }
         switch (event.type) {
+          case "reasoning-delta": {
+            const last = parts[parts.length - 1];
+            if (last && last.type === "reasoning") {
+              last.text += event.text;
+            } else {
+              parts.push({ type: "reasoning", text: event.text });
+            }
+            emitPart(activeStream.requestId, parts);
+            break;
+          }
+          case "tool-call": {
+            parts.push({
+              type: "tool-call",
+              id: event.toolCallId,
+              name: event.toolName,
+              args: event.args,
+              status: "calling",
+            });
+            emitPart(activeStream.requestId, parts);
+            break;
+          }
+          case "tool-result": {
+            const tc = parts.find(
+              (p): p is ClientToolCallPart =>
+                p.type === "tool-call" && p.id === event.toolCallId,
+            );
+            break;
+          }
           case "text-delta": {
             const lastPart = parts[parts.length - 1];
             if (lastPart && lastPart.type === "text") {
@@ -179,7 +216,7 @@ export function useChat(sessionId: string, initialMessages: Message[]) {
           case "done": {
             if (!isActiveRequest(activeStream.requestId)) return;
             const fullText = parts
-              .filter((p) => p.text === "text")
+              .filter((p) => p.type === "text")
               .map((p) => p.text)
               .join("");
             updateMessage((prev) => [

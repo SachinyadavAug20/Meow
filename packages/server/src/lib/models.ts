@@ -41,20 +41,14 @@ const ANTHROPIC_PROVIDER_OPTIONS: Partial<
 };
 const GOOGLE_PROVIDER_OPTIONS: Partial<Record<GoogleModelId, ProviderOptions>> =
   {
-    "gemini-2.5-flash": {
-      google: {
-        thinkingConfig: { thinkingBudget: 8192, thinkingLevel: "medium" },
-      },
-    },
+    "gemini-2.5-flash-lite": {},
+    "gemini-2.5-flash": {},
     "gemini-2.5-pro": {
-      google: {
-        thinkingConfig: { thinkingBudget: 16000, thinkingLevel: "high" },
-      },
+      google: { thinkingConfig: { thinkingLevel: "high" } },
     },
     "gemini-3-pro-preview": {
-      google: {
-        thinkingConfig: { thinkingBudget: 32000, thinkingLevel: "high" },
-      },
+      google: { thinkingConfig: { thinkingLevel: "high" } },
+
     },
   };
 const OPENAI_PROVIDER_OPTIONS: Partial<Record<OpenAIModelId, ProviderOptions>> =
@@ -81,7 +75,7 @@ function resolveAnthropicModel(modelId: AntropicModelId): ResolvedModel {
     model: anthropic(modelId),
     provider: "anthropic",
     modelId,
-    providerOptions:ANTHROPIC_PROVIDER_OPTIONS[modelId]
+    providerOptions: ANTHROPIC_PROVIDER_OPTIONS[modelId],
   };
 }
 function resolveOpenAIModel(modelId: OpenAIModelId): ResolvedModel {
@@ -89,7 +83,7 @@ function resolveOpenAIModel(modelId: OpenAIModelId): ResolvedModel {
     model: openai(modelId),
     provider: "openai",
     modelId,
-    providerOptions:OPENAI_PROVIDER_OPTIONS[modelId]
+    providerOptions: OPENAI_PROVIDER_OPTIONS[modelId],
   };
 }
 function resolveGoogleModel(modelId: GoogleModelId): ResolvedModel {
@@ -97,7 +91,7 @@ function resolveGoogleModel(modelId: GoogleModelId): ResolvedModel {
     model: google(modelId),
     provider: "google",
     modelId,
-    providerOptions:GOOGLE_PROVIDER_OPTIONS[modelId]
+    providerOptions: GOOGLE_PROVIDER_OPTIONS[modelId],
   };
 }
 function resolveSupportedChatModel(model: SupportedChatModel): ResolvedModel {

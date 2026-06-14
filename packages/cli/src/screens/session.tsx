@@ -11,7 +11,7 @@ import prettyMilliseconds from "pretty-ms";
 import {
   DEFAULT_CHAT_MODEL_ID,
   type SupportedChatModelId,
-} from "@nightcode/shared";
+} from "@meow/shared";
 import { useChat } from "src/hooks/use-chat";
 import type { Message, ClientMessagePart } from "../hooks/use-chat";
 import { useKeyboardLayer } from "../providers/keyboard-layer";

@@ -5,8 +5,8 @@
     "jsxImportSource": "@opentui/react",
     "baseUrl": ".",
     "paths": {
-      "@nightcode/server": ["../server/src/index.ts"],
-      "@nightcode/shared": ["../shared/src/index.ts"]
+      "@meow/server": ["../server/src/index.ts"],
+      "@meow/shared": ["../shared/src/index.ts"]
     }
   }
 }

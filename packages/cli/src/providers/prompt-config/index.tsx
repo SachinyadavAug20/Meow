@@ -2,7 +2,7 @@ import { Mode } from "@meow/database";
 import {
   DEFAULT_CHAT_MODEL_ID,
   type SupportedChatModelId,
-} from "@nightcode/shared";
+} from "@meow/shared";
 import { createContext, useCallback, useContext, useState } from "react";
 
 type PrompConfigContextValue = {

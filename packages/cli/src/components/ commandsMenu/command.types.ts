@@ -1,7 +1,7 @@
 import type { Mode } from "@meow/database";
 import type { DialogContextValue } from "../../providers/dialog";
 import type { ToastContextValue } from "../../providers/toast";
-import type { SupportedChatModelId } from "@nightcode/shared";
+import type { SupportedChatModelId } from "@meow/shared";
 
 export interface commandContext{
   exit:()=>void;

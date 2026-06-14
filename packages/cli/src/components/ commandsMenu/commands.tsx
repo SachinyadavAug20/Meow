@@ -1,4 +1,4 @@
-import { DEFAULT_CHAT_MODEL_ID, SUPPORTED_CHAT_MODELS } from "@nightcode/shared";
+import { DEFAULT_CHAT_MODEL_ID, SUPPORTED_CHAT_MODELS } from "@meow/shared";
 import {
   AgentsDialogContent,
   ModelDialogContent,

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import { DEFAULT_CHAT_MODEL_ID, findSupportedChatModel } from "@nightcode/shared";
+import { DEFAULT_CHAT_MODEL_ID, findSupportedChatModel } from "@meow/shared";
 import { db } from "@meow/database"
 import { Role,MessageStatus,Mode } from "@meow/database/enums";
 
