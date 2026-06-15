@@ -9,7 +9,7 @@ app.get("/", (c) => c.text("hello world"));
 
 setInterval(() => {
   db.$queryRaw`SELECT 1`.catch(() => {});
-}, 120_000);
+}, 30_000);
 
 // standarize error
 app.onError((e, c) => {

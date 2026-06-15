@@ -5,13 +5,10 @@ import { apiClient } from "lib/api-client";
 import { BotMessage, ErrorMessage, UserMessage } from "src/components/message";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useToast } from "src/providers/toast";
-import { useEffect, useEffectEvent, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getErrorMessage } from "lib/http-error";
 import prettyMilliseconds from "pretty-ms";
-import {
-  DEFAULT_CHAT_MODEL_ID,
-  type SupportedChatModelId,
-} from "@meow/shared";
+import { messagePartSchema, type SupportedChatModelId } from "@meow/shared";
 import { useChat } from "src/hooks/use-chat";
 import type { Message, ClientMessagePart } from "../hooks/use-chat";
 import { useKeyboardLayer } from "../providers/keyboard-layer";
@@ -40,13 +37,19 @@ function mapDbMessages(dbMessages: SessionData["message"]): Message[] {
         mode: m.mode,
         model: m.model as SupportedChatModelId,
       };
+    const parasedParts = m.parts === null ? null : messagePartSchema.safeParse(m.parts)
+    const parts: ClientMessagePart[] = parasedParts?.success
+      ? parasedParts.data.map((p) =>
+          p.type === "tool-call" ? { ...p, status: "done" as const } : p,
+        )
+      : [];
     return {
       id: m.id,
       role: "assistant",
       content: m.content,
       mode: m.mode,
       model: m.model as SupportedChatModelId,
-      part: [{ type: "text", text: m.content }],
+      part:parts,
       ...(m.duration != null
         ? { duration: prettyMilliseconds(m.duration * 1000) }
         : {}),
@@ -57,7 +60,7 @@ function mapDbMessages(dbMessages: SessionData["message"]): Message[] {
 function ChatMessage({ msg }: { msg: Message }) {
   // which message to display user,bot or error message
   if (msg.role === "user") {
-    return <UserMessage message={msg.content} />;
+    return <UserMessage message={msg.content} mode={msg.mode} />;
   }
   if (msg.role === "error") {
     return <ErrorMessage message={msg.content} />;
@@ -73,7 +76,7 @@ function ChatMessage({ msg }: { msg: Message }) {
   );
 }
 function SessionChat({ session }: { session: SessionData }) {
-  const { mode,model } = usePromptConfig();
+  const { mode, model } = usePromptConfig();
   const [initialMessages] = useState(() => mapDbMessages(session.message));
   const { isTopLayer } = useKeyboardLayer();
   const { message, streaming, submit, abort, interrupt } = useChat(
@@ -96,9 +99,7 @@ function SessionChat({ session }: { session: SessionData }) {
   });
   return (
     <SessionShell
-      onSubmit={(text: string) =>
-        submit({ userText: text, mode, model})
-      }
+      onSubmit={(text: string) => submit({ userText: text, mode, model })}
       loading={streaming.status === "streaming"}
       interruptible={streaming.status === "streaming"}
       inputDisabled={streaming.status === "streaming"}

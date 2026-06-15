@@ -6,14 +6,15 @@ import { SessionShell } from "../components/session-shell";
 import { useToast } from "src/providers/toast";
 import { apiClient } from "lib/api-client";
 import { getErrorMessage } from "lib/http-error";
-import { usePromptConfig } from "src/providers/prompt-config";
+import { Mode } from "@meow/database";
 
 const newSessionStateSchema = z.object({
   message: z.string(),
+  mode:z.enum(Mode),
+  model:z.string()
 });
 
 export function NewSession() {
-  const {mode,model}=usePromptConfig();
   const navigation = useNavigate();
   const location = useLocation();
   const toast = useToast();
@@ -45,8 +46,8 @@ export function NewSession() {
             initialMessage: {
               role: "USER",
               content: state.message,
-              mode,
-              model,
+              mode:state.mode,
+              model:state.model
             },
           },
         });
@@ -74,7 +75,7 @@ export function NewSession() {
   if(!state) return null;
   return (
     <SessionShell onSubmit={() => {}} inputDisabled loading>
-      <UserMessage message={state.message} />
+      <UserMessage message={state.message} mode={state.mode}/>
     </SessionShell>
   );
 }

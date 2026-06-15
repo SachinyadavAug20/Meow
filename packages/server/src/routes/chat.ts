@@ -4,8 +4,11 @@ import { z } from "zod";
 import { isSupportedChatModel, resolveChatModel } from "../lib/models";
 import { zValidator } from "@hono/zod-validator";
 import { streamSSE } from "hono/streaming";
-import { streamText as aiStreamText } from "ai";
+import { streamText as aiStreamText, stepCountIs } from "ai";
 import type { Prisma } from "@meow/database";
+import { createTools } from "../tools";
+import { buildSystemPrompt } from "../system-prompt";
+
 import {
   type ChatStreamEvent,
   type MessagePart,
@@ -60,6 +63,7 @@ function getResumeableUserMessage(
 type StreamParams = {
   sessionId: string;
   model: string;
+  cwd: string | null;
   history: { role: "user" | "assistant"; content: string }[];
   message: string;
   mode: Mode;
@@ -69,8 +73,9 @@ async function streamAIResponse(
   stream: Parameters<Parameters<typeof streamSSE>[1]>[0],
   params: StreamParams,
 ) {
-  const { sessionId, model, history, mode, abortController } = params;
+  const { sessionId, model, history, mode, abortController, cwd } = params;
   const startTime = Date.now();
+  const tools = cwd ? createTools(cwd, mode) : undefined;
   const parts: MessagePart[] = [];
   const resolvedModel = resolveChatModel(model);
 
@@ -100,7 +105,10 @@ async function streamAIResponse(
   try {
     const result = aiStreamText({
       model: resolvedModel.model,
+      system: buildSystemPrompt({ cwd, mode }),
       messages: history,
+      tools,
+      stopWhen:tools?stepCountIs(50):undefined,// default 20, extend when have tools
       abortSignal: abortController.signal,
       providerOptions: resolvedModel.providerOptions,
     });
@@ -201,7 +209,7 @@ async function streamAIResponse(
         status: MessageStatus.COMPLETE,
         model,
         content: fullText,
-        parts:validatedParts,
+        parts: validatedParts,
         mode,
         duration: Math.round(elaspsedMs / 1000),
       },
@@ -274,6 +282,7 @@ const app = new Hono()
               sessionId,
               model: String(lastMessage.model),
               history,
+              cwd:session.cwd,
               mode: lastMessage.mode,
               abortController,
               message: "",
@@ -343,6 +352,7 @@ const app = new Hono()
         await streamAIResponse(stream, {
           sessionId,
           model: data.model,
+          cwd:session.cwd,
           message: data.content,
           history,
           mode: data.mode,
