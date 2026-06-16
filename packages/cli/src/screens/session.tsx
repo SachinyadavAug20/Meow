@@ -8,7 +8,7 @@ import { useToast } from "src/providers/toast";
 import { useEffect, useMemo, useState } from "react";
 import { getErrorMessage } from "lib/http-error";
 import prettyMilliseconds from "pretty-ms";
-import { messagePartSchema, type SupportedChatModelId } from "@meow/shared";
+import { messagePartsSchema, type SupportedChatModelId } from "@meow/shared";
 import { useChat } from "src/hooks/use-chat";
 import type { Message, ClientMessagePart } from "../hooks/use-chat";
 import { useKeyboardLayer } from "../providers/keyboard-layer";
@@ -37,7 +37,7 @@ function mapDbMessages(dbMessages: SessionData["message"]): Message[] {
         mode: m.mode,
         model: m.model as SupportedChatModelId,
       };
-    const parasedParts = m.parts === null ? null : messagePartSchema.safeParse(m.parts)
+    const parasedParts = m.parts === null ? null : messagePartsSchema.safeParse(m.parts)
     const parts: ClientMessagePart[] = parasedParts?.success
       ? parasedParts.data.map((p) =>
           p.type === "tool-call" ? { ...p, status: "done" as const } : p,

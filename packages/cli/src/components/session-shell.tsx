@@ -47,10 +47,10 @@ export function SessionShell({
       >
         <box flexDirection="row" alignItems="center" gap={2}>
           {loading ? (
-            <>
+            <box flexDirection="row" gap={2}>
               <Spinner mode={mode}/>
               {interruptible && <text>esc to interrupt</text>}
-            </>
+            </box>
           ) : null}
         </box>
         <box flexDirection="row" gap={1} flexShrink={0} marginLeft="auto">

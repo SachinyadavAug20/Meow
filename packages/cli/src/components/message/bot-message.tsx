@@ -68,7 +68,7 @@ export function BotMessage({
                   paddingX={2}
                 >
                   <text attributes={TextAttributes.DIM}>
-                    <text fg={colors.thinking}>Thinking: </text>
+                  <text fg={colors.thinking}>Thinking: </text>
                     {part.text || " "}
                   </text>
                 </box>
@@ -86,7 +86,7 @@ export function BotMessage({
                   <text attributes={TextAttributes.DIM}>
                     <text fg={colors.thinking}>{formatToolName(part.name)}:</text>{" "}
                     {formatToolArgs(part) || " "}
-                    {part.status === "calling" ? "..." : null}
+                    {part.status === "calling" ? "..." :""}
                   </text>
                 </box>
               );

@@ -1,5 +1,5 @@
 import type { Mode } from "@meow/database";
-import { chatStreamEventSchema, type SupportedChatModelId, } from "@meow/shared";
+import { chatStreamEventSchema, type SupportedChatModelId } from "@meow/shared";
 import { EventSourceParserStream } from "eventsource-parser/stream";
 import type { ClientResponse } from "hono/client";
 import { apiClient } from "lib/api-client";
@@ -108,7 +108,7 @@ export function useChat(sessionId: string, initialMessages: Message[]) {
       activeStream.interruptedCaptured = true;
       const parts = [...activeStream.parts];
       const fullText = parts
-        .filter((p) => p.text === "text")
+        .filter((p) => p.type === "text")
         .map((p) => p.text)
         .join("");
 
@@ -201,6 +201,11 @@ export function useChat(sessionId: string, initialMessages: Message[]) {
               (p): p is ClientToolCallPart =>
                 p.type === "tool-call" && p.id === event.toolCallId,
             );
+            if (tc) {
+              tc.status = "done";
+              tc.result = event.result;
+            }
+            emitPart(activeStream.requestId, parts);
             break;
           }
           case "text-delta": {
