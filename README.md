@@ -2,6 +2,16 @@
 
 timeline:
 
+
+as of 16-6-2026 : @ file mention feature
+
+![screenshot](Documentation/screenshots/7.png)
+
+as of 14-6-2026 : session resume
+
+![screenshot](Documentation/screenshots/6.png)
+
+
 as of 12-6-2026 : AI chat with interrupt option
 
 ![screenshot](Documentation/screenshots/5.png)

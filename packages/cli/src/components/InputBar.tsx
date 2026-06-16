@@ -9,7 +9,7 @@ import {
 import { getRandomQuestion } from "../../utlis/constant";
 import StatusBar from "./StatusBar";
 import { CommandsMenu } from "./ commandsMenu";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useKeyboard, useRenderer } from "@opentui/react";
 import { useCommandMenu } from "./ commandsMenu/use-command-menu";
 import type { Command } from "./ commandsMenu/command.types";
@@ -18,7 +18,10 @@ import { useKeyboardLayer } from "../providers/keyboard-layer";
 import { useDialog } from "../providers/dialog";
 import { useTheme } from "../providers/theme";
 import { useNavigate } from "react-router";
-import { usePromptConfig } from "src/providers/prompt-config";
+import {
+  PromptConfigProvider,
+  usePromptConfig,
+} from "src/providers/prompt-config";
 import { Mode } from "@meow/database";
 import { isAbsolute, relative, resolve } from "node:path";
 import { readdir } from "node:fs/promises";
@@ -270,8 +273,15 @@ export function InputBar({ onSubmit, disabled }: Prop) {
   const renderer = useRenderer();
   const toast = useToast();
   const dialog = useDialog();
-  const { isTopLayer, setResponder } = useKeyboardLayer();
+  const activeMentionRef = useRef<MentionMatch | null>(null);
+  const mentionScrollRef = useRef<ScrollBoxRenderable>(null);
+  const { isTopLayer, setResponder, push, pop } = useKeyboardLayer();
   const navigate = useNavigate();
+  const [activeMention, setActiveMention] = useState<MentionMatch | null>(null);
+  const [mentionCandidates, setMentionCandidates] = useState<
+    MentionCandidate[]
+  >([]);
+  const [mentionSelectedIndex, setMentionSelectedIndex] = useState(0);
 
   const {
     showCommandMenu,
@@ -282,11 +292,47 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     setSelectedIndex,
     scrollRef,
   } = useCommandMenu();
+
+  const showMentionMenu = activeMention !== null;
+  const closeMentionMenu = useCallback(() => {
+    setActiveMention(null);
+    setMentionCandidates([]);
+    pop("mention");
+  }, [pop]);
+  const syncMentionMenu = useCallback(
+    (text: string, cursorOffSet: number) => {
+      const nextMention = findActiveMentions(text, cursorOffSet);
+      const previousMention = activeMentionRef.current;
+      const mentionChanged =
+        previousMention?.start !== nextMention?.start ||
+        previousMention?.end !== nextMention?.end ||
+        previousMention?.query !== nextMention?.query;
+      if (!nextMention) {
+        if (previousMention) {
+          closeMentionMenu();
+        }
+        return;
+      }
+      activeMentionRef.current = nextMention;
+      setActiveMention(nextMention);
+      push("mention", () => {
+        closeMentionMenu();
+        return true;
+      });
+      if (mentionChanged) {
+        setMentionSelectedIndex(0);
+        mentionScrollRef.current?.scrollTo(0);
+      }
+    },
+    [closeMentionMenu, push],
+  );
+
   const handleTextareaContentChange = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
     handleContentChange(textarea.plainText);
-  }, []);
+    syncMentionMenu(textarea.plainText, textarea.cursorOffset);
+  }, [handleContentChange, syncMentionMenu]);
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -295,6 +341,7 @@ export function InputBar({ onSubmit, disabled }: Prop) {
       onSubmitRef.current();
     };
   }, []);
+
   const handleSubmit = useCallback(() => {
     if (disabled) return;
     const textarea = textareaRef.current;
@@ -303,7 +350,31 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     if (text.length === 0) return;
     onSubmit(text);
     textarea.setText("");
-  }, []);
+  }, [disabled, onSubmit]);
+
+  const handleMentionExecute = useCallback(
+    (index: number) => {
+      const textarea = textareaRef.current;
+      const mention = activeMentionRef.current;
+      const candidate = mentionCandidates[index];
+
+      if (!textarea || !mention || !candidate) return;
+      const insertion =
+        candidate?.kind === "directory"
+          ? candidate.path
+          : `${candidate?.path}:`;
+      const nextText = `${textarea.plainText.slice(0, mention.start)}@${insertion}${textarea.plainText.slice(mention.end)}`;
+      textarea.replaceText(nextText);
+      textarea.cursorOffset = mention.start + insertion.length + 1;
+      syncMentionMenu(nextText, textarea.cursorOffset);
+    },
+    [mentionCandidates, syncMentionMenu],
+  );
+  const handleTextareaCursorChange = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    syncMentionMenu(textarea.plainText, textarea.cursorOffset);
+  }, [syncMentionMenu]);
   const handleCommand = useCallback(
     (command: Command | undefined) => {
       const textarea = textareaRef.current;
@@ -342,6 +413,13 @@ export function InputBar({ onSubmit, disabled }: Prop) {
       handleCommand(command);
       return;
     }
+    if (showMentionMenu) {
+      const candidate = mentionCandidates[mentionSelectedIndex];
+      if (candidate) {
+        handleMentionExecute(mentionSelectedIndex);
+        return;
+      }
+    }
     handleSubmit();
   };
   useKeyboard((key) => {
@@ -352,6 +430,26 @@ export function InputBar({ onSubmit, disabled }: Prop) {
       toggleMode();
     }
   });
+  useEffect(() => {
+    if (!activeMention) {
+      setMentionCandidates([]);
+      return;
+    }
+    let ignore = false;
+    const loadcandiates = async () => {
+      const nextCandiates = await getMentionCandidates(activeMention.query);
+      if (ignore) return;
+      setMentionCandidates(nextCandiates);
+      setMentionSelectedIndex((currentIndex) => {
+        if (nextCandiates.length === 0) return 0;
+        return Math.min(currentIndex, nextCandiates.length - 1);
+      });
+    };
+    void loadcandiates();
+    return () => {
+      ignore = false;
+    };
+  }, [activeMention]);
 
   useEffect(() => {
     setResponder("base", () => {
@@ -366,7 +464,43 @@ export function InputBar({ onSubmit, disabled }: Prop) {
     return () => setResponder("base", null);
   }, [disabled, setResponder]);
   const { colors } = useTheme();
+  useKeyboard((key) => {
+    if (disabled) return;
+    if (!showMentionMenu || !isTopLayer("mention")) return;
 
+    if (key.name === "escape") {
+      key.preventDefault();
+      closeMentionMenu();
+    } else if (key.name === "up") {
+      key.preventDefault();
+      setMentionSelectedIndex((currentIndex) => {
+        const nextIndex = Math.max(0, currentIndex - 1);
+        const scrollbox = mentionScrollRef.current;
+        if (scrollbox && nextIndex < scrollbox.scrollTop) {
+          scrollbox.scrollTo(nextIndex);
+        }
+        return nextIndex;
+      });
+    } else if (key.name === "down") {
+      key.preventDefault();
+      setMentionSelectedIndex((currentIndex) => {
+        if (mentionCandidates.length === 0) return 0;
+        const nextIndex = Math.min(
+          mentionCandidates.length - 1,
+          currentIndex + 1,
+        );
+        const scrollbox = mentionScrollRef.current;
+        if (scrollbox) {
+          const viewportHeight = scrollbox.viewport.height;
+          const visibleEnd = scrollbox.scrollTop + viewportHeight - 1;
+          if (nextIndex > visibleEnd) {
+            scrollbox.scrollTo(nextIndex - viewportHeight + 1);
+          }
+        }
+        return nextIndex;
+      });
+    }
+  });
   return (
     <box width="100%" alignItems="center">
       <box
@@ -407,12 +541,35 @@ export function InputBar({ onSubmit, disabled }: Prop) {
               />
             </box>
           )}
+          {!showCommandMenu && showMentionMenu && (
+            <box
+              position="absolute"
+              bottom="100%"
+              left={0}
+              width="100%"
+              backgroundColor={colors.surface}
+              zIndex={10}
+            >
+              <FileMentionMenu
+                candidates={mentionCandidates}
+                selectedIndex={mentionSelectedIndex}
+                scrollRef={mentionScrollRef}
+                onSelect={setMentionSelectedIndex}
+                onExecute={handleMentionExecute}
+              />
+            </box>
+          )}
           <textarea
             onContentChange={handleTextareaContentChange}
             ref={textareaRef}
             flexGrow={1}
             keyBindings={TEXTAREA_KEY_BINDINGS}
-            focused={!disabled && (isTopLayer("base") || isTopLayer("command"))}
+            focused={
+              !disabled &&
+              (isTopLayer("base") ||
+                isTopLayer("mention") ||
+                isTopLayer("command"))
+            }
             placeholder={getRandomQuestion()}
           />
           <StatusBar />
